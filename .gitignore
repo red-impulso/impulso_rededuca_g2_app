@@ -32,6 +32,12 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# Excepción: este sí se sube
+!.env.example
+
+# Resultados de Playwright (se regeneran solos)
+/test-results/
+/playwright-report/
 
 # vercel
 .vercel
