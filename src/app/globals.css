@@ -16,6 +16,25 @@
   --font-sans: var(--font-inter);
 }
 
+/* Logo animado: las órbitas giran sobre el centro del dibujo.
+   Sin animación si la persona tiene activado "reducir movimiento". */
+.logo-orbitas {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .logo-orbitas {
+    animation: logo-girar 14s linear infinite;
+  }
+}
+
+@keyframes logo-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 body {
   background: var(--color-surface);
   color: var(--color-ink);

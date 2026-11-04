@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { getNavItems } from "../../config/navigation";
 import { useSession } from "../../features/session/use-session";
 import { BotonSalir } from "../auth/boton-salir";
+import { LogoAnimado } from "../brand/logo-animado";
 
 export function PanelNav() {
   const session = useSession();
@@ -16,7 +17,9 @@ export function PanelNav() {
   return (
     <header className="border-b">
       <nav className="mx-auto flex max-w-3xl flex-wrap items-center gap-2 px-4 py-3">
-        <span className="mr-2 font-semibold">RedEduca</span>
+        <span className="mr-2">
+          <LogoAnimado size={40} conTexto />
+        </span>
         {items.map((item) => (
           <Link
             key={item.href}
