@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Logo PROVISORIO de RedEduca (B-03), hecho a mano a partir de la hoja de
+       identidad. Se reemplaza por el original de UX/UI cuando llegue.
+       "orbitas" y "centro" van separados para poder animar solo las órbitas. -->
+  <defs>
+    <radialGradient id="esfera" cx="40%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#7cc4ff"/>
+      <stop offset="55%" stop-color="#2f6fe0"/>
+      <stop offset="100%" stop-color="#1b2f8a"/>
+    </radialGradient>
+  </defs>
+  <g id="orbitas">
+    <ellipse cx="256" cy="256" rx="206" ry="96" fill="none" stroke="#2b2f8f" stroke-width="34" transform="rotate(-28 256 256)"/>
+    <ellipse cx="256" cy="256" rx="196" ry="84" fill="none" stroke="#22c3e6" stroke-width="30" transform="rotate(38 256 256)"/>
+    <circle cx="148" cy="86" r="40" fill="#833dff"/>
+    <circle cx="436" cy="226" r="36" fill="#f79a3e"/>
+  </g>
+  <g id="centro">
+    <circle cx="256" cy="256" r="78" fill="#ffffff"/>
+    <circle cx="256" cy="256" r="66" fill="url(#esfera)"/>
+  </g>
+</svg>

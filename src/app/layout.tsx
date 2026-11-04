@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { DomPatch } from "../components/dom-patch";
 import { SiteFooter } from "../components/layout/site-footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Letra de la marca (B-03).
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -26,7 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="es"
       translate="no"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased notranslate`}
+      className={`${inter.variable} h-full antialiased notranslate`}
     >
       <body className="min-h-full flex flex-col">
         <DomPatch />
