@@ -47,6 +47,9 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Todo menos los archivos internos de Next y las imágenes.
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  // Todo menos los archivos internos de Next, el manifest (el celular lo pide
+  // sin sesión para instalar la app) y las imágenes.
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };

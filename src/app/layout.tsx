@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { BRAND_COLORS } from "../config/brand";
 import { DomPatch } from "../components/dom-patch";
 import { SiteFooter } from "../components/layout/site-footer";
 
@@ -15,6 +16,11 @@ export const metadata: Metadata = {
   description:
     "Página web para docentes y familias. Creada por alumnos de IES Nº 6 de Perico, Jujuy, Argentina.",
   other: { google: "notranslate" },
+};
+
+// Color de la barra de arriba del celular (B-11), igual que el del manifest.
+export const viewport: Viewport = {
+  themeColor: BRAND_COLORS.ink,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
