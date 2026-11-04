@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { crearClienteSupabase } from "../../lib/supabase/client";
+import { LogoAnimado } from "../../components/brand/logo-animado";
 
 export default function IngresarPage() {
   const router = useRouter();
@@ -37,6 +38,7 @@ export default function IngresarPage() {
   return (
     <main className="flex flex-1 items-center justify-center px-4 py-16">
       <form onSubmit={ingresar} className="flex w-full max-w-sm flex-col gap-4">
+        <LogoAnimado size={64} conTexto />
         <h1 className="text-2xl font-semibold">Ingresar a RedEduca</h1>
 
         <label className="flex flex-col gap-1 text-sm">
