@@ -45,9 +45,11 @@ describe('getNavItems', () => {
     expect(conHijos).toEqual(['guardian']);
   });
 
-  it('todos los roles ven Inicio', () => {
+  it('todos los roles ven Inicio y Comunicados', () => {
     for (const role of ['admin', 'director', 'teacher', 'guardian', 'student'] as const) {
-      expect(getNavItems(role).map((item) => item.href)).toContain('/inicio');
+      const hrefs = getNavItems(role).map((item) => item.href);
+      expect(hrefs).toContain('/inicio');
+      expect(hrefs).toContain('/comunicados');
     }
   });
 });
