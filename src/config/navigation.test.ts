@@ -24,6 +24,13 @@ describe('getNavItems', () => {
     }
   });
 
+  it('Calificaciones es solo para docentes', () => {
+    const conCalificaciones = (['admin', 'director', 'teacher', 'guardian', 'student'] as const).filter(
+      (role) => getNavItems(role).some((item) => item.href === '/calificaciones')
+    );
+    expect(conCalificaciones).toEqual(['teacher']);
+  });
+
   it('todos los roles ven Inicio', () => {
     for (const role of ['admin', 'director', 'teacher', 'guardian', 'student'] as const) {
       expect(getNavItems(role).map((item) => item.href)).toContain('/inicio');

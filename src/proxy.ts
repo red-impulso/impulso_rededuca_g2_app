@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import { isAuthRetryableFetchError } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
 const RUTA_INGRESAR = "/ingresar";
@@ -29,7 +30,15 @@ export async function proxy(request: NextRequest) {
       },
     });
 
-    const { data } = await supabase.auth.getUser();
+    const { data, error } = await supabase.auth.getUser();
+
+    // Hay sesión guardada pero no se pudo hablar con Supabase (mala señal, por
+    // ejemplo). No es lo mismo que "sin sesión": no sacamos a nadie de la
+    // página. La API igual revisa el token en cada pedido.
+    if (isAuthRetryableFetchError(error)) {
+      return response;
+    }
+
     hayUsuario = data.user !== null;
   }
 
