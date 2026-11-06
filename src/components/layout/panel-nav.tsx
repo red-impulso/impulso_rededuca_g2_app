@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getNavItems } from "../../config/navigation";
+import { NotificationBell } from "../../features/notifications/notification-bell";
 import { useSession } from "../../features/session/use-session";
 import { BotonSalir } from "../auth/boton-salir";
 import { LogoAnimado } from "../brand/logo-animado";
@@ -11,8 +12,8 @@ export function PanelNav() {
   const session = useSession();
   const pathname = usePathname();
 
-  const role = session.status === "ready" ? session.activeMembership?.role : undefined;
-  const items = role ? getNavItems(role) : [];
+  const membership = session.status === "ready" ? session.activeMembership : null;
+  const items = membership ? getNavItems(membership.role) : [];
 
   return (
     <header className="border-b">
@@ -30,7 +31,8 @@ export function PanelNav() {
             {item.label}
           </Link>
         ))}
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          {membership && <NotificationBell institutionId={membership.institutionId} />}
           <BotonSalir />
         </div>
       </nav>
