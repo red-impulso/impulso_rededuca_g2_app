@@ -43,7 +43,7 @@ export function NotificationBell({ institutionId }: { institutionId: string }) {
       <svg
         viewBox="0 0 24 24"
         aria-hidden
-        className="h-6 w-6 fill-none stroke-ink"
+        className="h-6 w-6 fill-none stroke-blue"
         strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -51,11 +51,13 @@ export function NotificationBell({ institutionId }: { institutionId: string }) {
         <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9" />
         <path d="M10 20a2.2 2.2 0 0 0 4 0" />
       </svg>
-      {sinLeer > 0 && (
-        <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-semibold text-white">
-          {sinLeer > 99 ? "99+" : sinLeer}
-        </span>
-      )}
+      <span
+        className={`absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-semibold text-white ${
+          sinLeer > 0 ? "bg-red-600" : "bg-blue"
+        }`}
+      >
+        {sinLeer > 99 ? "99+" : sinLeer}
+      </span>
     </Link>
   );
 }
