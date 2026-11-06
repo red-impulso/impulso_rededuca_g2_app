@@ -2,7 +2,22 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { ApiError, apiFetch } from "../../lib/api";
-import { etiquetaCurso, TURNOS, type Course } from "./institution";
+import {
+  BotonNuevo,
+  Buscador,
+  CAMPO,
+  EstadoActualizado,
+  EstadoCargando,
+  EstadoError,
+  EstadoVacio,
+  Insignia,
+  MenuAcciones,
+  Paginacion,
+  POR_PAGINA,
+  TARJETA,
+} from "./admin-ui";
+import { Icono } from "../../components/ui/estado";
+import { cursoActivo, etiquetaTurno, nivelCurso, nombreCurso, TURNOS, type Course } from "./institution";
 
 function mensajeDe(error: unknown): string {
   return error instanceof ApiError ? error.message : "No se pudo conectar. Probá de nuevo en un rato.";
@@ -10,7 +25,7 @@ function mensajeDe(error: unknown): string {
 
 type Carga =
   | { status: "loading" }
-  | { status: "error"; message: string }
+  | { status: "error" }
   | { status: "ready"; cursos: Course[] };
 
 interface CursoFormValores {
@@ -52,7 +67,7 @@ function FormularioCurso({
   onCancel?: () => void;
 }) {
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-3 rounded border bg-white p-4">
+    <form onSubmit={onSubmit} className={`flex flex-col gap-3 p-4 ${TARJETA}`}>
       <div className="grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1 text-sm">
           Año
@@ -62,7 +77,7 @@ function FormularioCurso({
             required
             value={valores.year}
             onChange={(e) => setValores({ ...valores, year: e.target.value })}
-            className="rounded border px-3 py-2"
+            className={CAMPO}
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -72,7 +87,7 @@ function FormularioCurso({
             required
             value={valores.division}
             onChange={(e) => setValores({ ...valores, division: e.target.value })}
-            className="rounded border px-3 py-2"
+            className={CAMPO}
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -80,7 +95,7 @@ function FormularioCurso({
           <select
             value={valores.shift}
             onChange={(e) => setValores({ ...valores, shift: e.target.value })}
-            className="rounded border px-3 py-2"
+            className={CAMPO}
           >
             {TURNOS.map((turno) => (
               <option key={turno.value} value={turno.value}>
@@ -98,7 +113,7 @@ function FormularioCurso({
             required
             value={valores.schoolYear}
             onChange={(e) => setValores({ ...valores, schoolYear: e.target.value })}
-            className="rounded border px-3 py-2"
+            className={CAMPO}
           />
         </label>
       </div>
@@ -113,12 +128,12 @@ function FormularioCurso({
         <button
           type="submit"
           disabled={enviando}
-          className="rounded bg-accent px-4 py-2 font-medium text-white disabled:opacity-50"
+          className="rounded-xl bg-blue px-4 py-2 font-medium text-white disabled:opacity-50"
         >
           {submitLabel}
         </button>
         {onCancel && (
-          <button type="button" onClick={onCancel} className="rounded border px-4 py-2">
+          <button type="button" onClick={onCancel} className="rounded-xl border border-gray-300 px-4 py-2">
             Cancelar
           </button>
         )}
@@ -135,6 +150,10 @@ export function CursosAdmin({ institutionId }: { institutionId: string }) {
   const [valores, setValores] = useState<CursoFormValores>(valoresVacios);
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [intento, setIntento] = useState(0);
+  const [actualizado, setActualizado] = useState(false);
+  const [busqueda, setBusqueda] = useState("");
+  const [pagina, setPagina] = useState(0);
 
   useEffect(() => {
     let cancelado = false;
@@ -143,14 +162,14 @@ export function CursosAdmin({ institutionId }: { institutionId: string }) {
       .then((cursos) => {
         if (!cancelado) setCarga({ status: "ready", cursos });
       })
-      .catch((e) => {
-        if (!cancelado) setCarga({ status: "error", message: mensajeDe(e) });
+      .catch(() => {
+        if (!cancelado) setCarga({ status: "error" });
       });
 
     return () => {
       cancelado = true;
     };
-  }, [institutionId]);
+  }, [institutionId, intento]);
 
   function valoresAJson() {
     return {
@@ -179,6 +198,7 @@ export function CursosAdmin({ institutionId }: { institutionId: string }) {
       actualizarLista((cursos) => [...cursos, nuevo]);
       setAlta("closed");
       setValores(valoresVacios);
+      setActualizado(true);
     } catch (e) {
       setError(mensajeDe(e));
     } finally {
@@ -200,6 +220,7 @@ export function CursosAdmin({ institutionId }: { institutionId: string }) {
       });
       actualizarLista((cursos) => cursos.map((curso) => (curso.id === editando ? actualizado : curso)));
       setEditando(null);
+      setActualizado(true);
     } catch (e) {
       setError(mensajeDe(e));
     } finally {
@@ -219,6 +240,7 @@ export function CursosAdmin({ institutionId }: { institutionId: string }) {
     try {
       await apiFetch(`/courses/${id}`, { method: "DELETE", institutionId });
       actualizarLista((cursos) => cursos.filter((curso) => curso.id !== id));
+      setActualizado(true);
     } catch (e) {
       setError(mensajeDe(e));
     } finally {
@@ -233,86 +255,138 @@ export function CursosAdmin({ institutionId }: { institutionId: string }) {
     setConfirmando(null);
   }
 
-  if (carga.status === "loading") return <p>Cargando cursos...</p>;
+  function abrirAlta() {
+    setAlta("open");
+    setValores(valoresVacios);
+    setError(null);
+  }
+
+  if (carga.status === "loading") return <EstadoCargando titulo="Cargando cursos..." />;
 
   if (carga.status === "error") {
     return (
-      <p role="alert" className="text-red-600">
-        {carga.message}
-      </p>
+      <EstadoError
+        titulo="Error al cargar los cursos"
+        onReintentar={() => {
+          setCarga({ status: "loading" });
+          setIntento((actual) => actual + 1);
+        }}
+      />
     );
   }
 
+  if (actualizado) {
+    return (
+      <EstadoActualizado titulo="¡Cursos actualizados!" boton="Ver cursos" onClick={() => setActualizado(false)} />
+    );
+  }
+
+  if (alta === "open" || editando) {
+    return (
+      <FormularioCurso
+        valores={valores}
+        setValores={setValores}
+        onSubmit={editando ? guardarEdicion : crear}
+        enviando={enviando}
+        error={error}
+        submitLabel={editando ? (enviando ? "Guardando..." : "Guardar") : enviando ? "Creando..." : "Crear curso"}
+        onCancel={() => {
+          setAlta("closed");
+          setEditando(null);
+          setError(null);
+        }}
+      />
+    );
+  }
+
+  if (carga.cursos.length === 0) {
+    return (
+      <EstadoVacio
+        titulo="No hay cursos registrados"
+        texto="Todavía no se agregaron cursos."
+        boton="Agregar curso"
+        onClick={abrirAlta}
+        ilustracion={<path d="M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v14" />}
+      />
+    );
+  }
+
+  const texto = busqueda.trim().toLowerCase();
+  const filtrados = carga.cursos.filter((curso) =>
+    `${nombreCurso(curso)} ${nivelCurso(curso.year)} ${etiquetaTurno(curso.shift)}`.toLowerCase().includes(texto)
+  );
+  const visibles = filtrados.slice(pagina * POR_PAGINA, (pagina + 1) * POR_PAGINA);
+  const celda = "hidden px-4 py-3 sm:table-cell";
+
   return (
     <div className="flex flex-col gap-4">
-      {alta === "closed" ? (
-        <button
-          type="button"
-          onClick={() => {
-            setAlta("open");
-            setValores(valoresVacios);
-            setError(null);
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Buscador
+          nombre="curso"
+          valor={busqueda}
+          onChange={(valor) => {
+            setBusqueda(valor);
+            setPagina(0);
           }}
-          className="self-start rounded bg-accent px-4 py-2 font-medium text-white"
-        >
-          Nuevo curso
-        </button>
-      ) : (
-        <FormularioCurso
-          valores={valores}
-          setValores={setValores}
-          onSubmit={crear}
-          enviando={enviando}
-          error={error}
-          submitLabel={enviando ? "Creando..." : "Crear curso"}
-          onCancel={() => setAlta("closed")}
         />
-      )}
+        <BotonNuevo texto="Nuevo curso" onClick={abrirAlta} />
+      </div>
 
-      {carga.cursos.length === 0 && <p>Todavía no hay cursos.</p>}
-
-      <ul className="flex flex-col gap-3">
-        {carga.cursos.map((curso) => (
-          <li key={curso.id}>
-            {editando === curso.id ? (
-              <FormularioCurso
-                valores={valores}
-                setValores={setValores}
-                onSubmit={guardarEdicion}
-                enviando={enviando}
-                error={error}
-                submitLabel={enviando ? "Guardando..." : "Guardar"}
-                onCancel={() => setEditando(null)}
-              />
-            ) : (
-              <div className="flex flex-wrap items-center justify-between gap-2 rounded border bg-white px-4 py-3">
-                <p>
-                  <span className="font-semibold">{etiquetaCurso(curso)}</span>
-                  <span className="text-sm text-gray-600"> · Ciclo {curso.schoolYear}</span>
-                </p>
-                <div className="flex gap-2">
-                  <button type="button" onClick={() => empezarEdicion(curso)} className="rounded border px-3 py-1 text-sm">
-                    Editar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => eliminar(curso.id)}
-                    className="rounded border border-red-300 px-3 py-1 text-sm text-red-700"
-                  >
-                    {confirmando === curso.id ? "¿Seguro? Tocá de nuevo" : "Eliminar"}
-                  </button>
-                </div>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
-
-      {error && !editando && alta === "closed" && (
+      {error && (
         <p role="alert" className="text-sm text-red-600">
           {error}
         </p>
       )}
+
+      <div className={TARJETA}>
+        <table className="w-full text-left">
+          <thead>
+            <tr className="bg-blue/5 text-sm">
+              <th className="px-4 py-3 font-semibold">Nombre del curso</th>
+              <th className={`${celda} font-semibold`}>Nivel</th>
+              <th className={`${celda} font-semibold`}>Turno</th>
+              <th className={`${celda} font-semibold`}>Estado</th>
+              <th className="px-4 py-3 text-right font-semibold">Acciones</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {visibles.map((curso) => {
+              const activo = cursoActivo(curso);
+              return (
+                <tr key={curso.id}>
+                  <td className="px-4 py-3">
+                    <span className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue/10 text-blue">
+                        <Icono className="h-5 w-5">
+                          <path d="m2 9 10-4 10 4-10 4zM6 11v5c3 2 9 2 12 0v-5" />
+                        </Icono>
+                      </span>
+                      <span>
+                        <span className="block font-semibold">{nombreCurso(curso)}</span>
+                        <span className="block text-sm text-gray-600">Ciclo {curso.schoolYear}</span>
+                      </span>
+                    </span>
+                  </td>
+                  <td className={celda}>{nivelCurso(curso.year)}</td>
+                  <td className={celda}>{etiquetaTurno(curso.shift)}</td>
+                  <td className={celda}>
+                    <Insignia activa={activo}>{activo ? "Activo" : "Finalizado"}</Insignia>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <MenuAcciones
+                      nombre={nombreCurso(curso)}
+                      confirmando={confirmando === curso.id}
+                      onEditar={() => empezarEdicion(curso)}
+                      onEliminar={() => eliminar(curso.id)}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <Paginacion total={filtrados.length} pagina={pagina} nombre="cursos" onCambiar={setPagina} />
+      </div>
     </div>
   );
 }

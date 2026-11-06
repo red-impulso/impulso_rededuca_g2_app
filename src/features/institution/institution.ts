@@ -4,6 +4,11 @@ export interface Institution {
   name: string;
   address: string | null;
   levels: string[];
+  code: string | null;
+  phone: string | null;
+  email: string | null;
+  shift: string | null;
+  modality: string | null;
 }
 
 export interface Course {
@@ -35,6 +40,23 @@ export const TURNOS = [
 
 export function etiquetaTurno(shift: string): string {
   return TURNOS.find((turno) => turno.value === shift)?.label ?? shift;
+}
+
+const NIVELES = ["Primer", "Segundo", "Tercer", "Cuarto", "Quinto", "Sexto", "Séptimo"];
+
+// "3° A"
+export function nombreCurso(curso: Pick<Course, "year" | "division">): string {
+  return `${curso.year}° ${curso.division}`;
+}
+
+// "Tercer año"
+export function nivelCurso(year: number): string {
+  return `${NIVELES[year - 1] ?? `${year}°`} año`;
+}
+
+// La API no guarda un estado: un curso está activo en su ciclo lectivo.
+export function cursoActivo(curso: Pick<Course, "schoolYear">): boolean {
+  return curso.schoolYear >= new Date().getFullYear();
 }
 
 // "3° A · Turno mañana"
