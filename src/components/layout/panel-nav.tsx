@@ -199,7 +199,7 @@ export function PanelNav({ children }: { children: ReactNode }) {
 
       <nav
         aria-label="Menú inferior"
-        className="sticky bottom-0 z-20 flex justify-around border-t border-gray-200 bg-white/95 px-1 py-1 backdrop-blur md:hidden"
+        className="fixed inset-x-0 bottom-0 z-20 flex justify-around border-t border-gray-200 bg-white/95 px-1 py-1 backdrop-blur md:hidden"
       >
         {items.slice(0, ITEMS_ABAJO).map((item) => (
           <Enlace
