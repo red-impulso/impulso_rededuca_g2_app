@@ -26,7 +26,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Mis cursos', href: '/cursos', roles: ['teacher'] },
   { label: 'Mis materias', href: '/materias', roles: ['teacher'] },
   { label: 'Calificaciones', href: '/calificaciones', roles: ['teacher'] },
-  { label: 'Mis estudiantes', href: '/estudiantes', roles: ['guardian'] },
+  { label: 'Mis hijos', href: '/hijos', roles: ['guardian'] },
   { label: 'Institución', href: '/institucion', roles: ['admin', 'director'] },
 ];
 

@@ -31,6 +31,13 @@ describe('getNavItems', () => {
     expect(conCalificaciones).toEqual(['teacher']);
   });
 
+  it('Mis hijos es solo para tutores', () => {
+    const conHijos = (['admin', 'director', 'teacher', 'guardian', 'student'] as const).filter((role) =>
+      getNavItems(role).some((item) => item.href === '/hijos')
+    );
+    expect(conHijos).toEqual(['guardian']);
+  });
+
   it('todos los roles ven Inicio', () => {
     for (const role of ['admin', 'director', 'teacher', 'guardian', 'student'] as const) {
       expect(getNavItems(role).map((item) => item.href)).toContain('/inicio');
