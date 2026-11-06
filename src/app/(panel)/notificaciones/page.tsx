@@ -8,7 +8,10 @@ export default function NotificacionesPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
-      <h1 className="text-2xl font-semibold">Notificaciones</h1>
+      <div>
+        <h1 className="text-2xl font-semibold">Notificaciones</h1>
+        <p className="text-gray-600">Revisá tus avisos y mantenete informado.</p>
+      </div>
 
       {session.status === "loading" && <p>Cargando...</p>}
 

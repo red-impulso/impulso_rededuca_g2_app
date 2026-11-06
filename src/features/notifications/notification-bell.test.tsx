@@ -33,14 +33,19 @@ describe('NotificationBell', () => {
     expect(mockApi).toHaveBeenCalledWith('/notifications/unread-count', { institutionId: 'esc-1' });
   });
 
-  it('sin avisos no muestra número', async () => {
+  it('sin avisos muestra 0 en azul, y con avisos el número va en rojo', async () => {
     mockApi.mockResolvedValue({ count: 0 });
-
-    render(<NotificationBell institutionId="esc-1" />);
+    const { unmount } = render(<NotificationBell institutionId="esc-1" />);
 
     await waitFor(() => expect(mockApi).toHaveBeenCalled());
-    const link = await screen.findByRole('link', { name: 'Notificaciones' });
-    expect(link.textContent).toBe('');
+    const cero = await screen.findByText('0');
+    expect(cero.className).toContain('bg-blue');
+    unmount();
+
+    mockApi.mockResolvedValue({ count: 3 });
+    render(<NotificationBell institutionId="esc-1" />);
+
+    expect((await screen.findByText('3')).className).toContain('bg-red');
   });
 
   it('más de 99 muestra 99+', async () => {
