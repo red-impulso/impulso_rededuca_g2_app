@@ -4,5 +4,5 @@
 export const BRAND_COLORS = {
   ink: "#14213d",
   accent: "#f46a3c",
-  surface: "#fdf6ec",
+  surface: "#f0f6ff",
 } as const;

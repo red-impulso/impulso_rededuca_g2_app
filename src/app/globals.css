@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 /* Marca RedEduca (B-03). Paleta del resumen ejecutivo.
-   --color-surface es el crema de los prototipos de UX/UI: a confirmar.
+   --color-surface es el celeste de los prototipos de UX/UI.
    "static" deja siempre las variables en :root (aunque ninguna clase las use)
    y además crea clases de Tailwind: bg-surface, text-ink, bg-accent, etc. */
 @theme static {
   --color-ink: #14213d;
   --color-accent: #f46a3c;
-  --color-surface: #fdf6ec;
+  --color-surface: #f0f6ff;
   --color-blue: #2563eb;
   --color-green: #0f8a81;
 }
