@@ -5,6 +5,11 @@ test('sin sesión, visitar /inicio termina en /ingresar', async ({ page }) => {
   await expect(page).toHaveURL(/\/ingresar$/);
 });
 
+test('sin sesión, visitar /hijos termina en /ingresar', async ({ page }) => {
+  await page.goto('/hijos', { waitUntil: 'domcontentloaded' });
+  await expect(page).toHaveURL(/\/ingresar$/);
+});
+
 test('/ingresar muestra el formulario y el pie del grupo', async ({ page }) => {
   await page.goto('/ingresar', { waitUntil: 'domcontentloaded' });
   await expect(page.getByLabel('Email')).toBeVisible();
