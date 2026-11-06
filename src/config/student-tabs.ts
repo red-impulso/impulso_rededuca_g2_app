@@ -5,4 +5,7 @@ export interface StudentTab {
   segment: string;
 }
 
-export const STUDENT_TABS: StudentTab[] = [{ label: 'Notas', segment: 'notas' }];
+export const STUDENT_TABS: StudentTab[] = [
+  { label: 'Notas', segment: 'notas' },
+  { label: 'Asistencia', segment: 'asistencia' },
+];
