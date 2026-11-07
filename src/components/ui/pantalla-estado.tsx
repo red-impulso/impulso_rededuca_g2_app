@@ -159,13 +159,17 @@ export function Aviso({ texto, onCerrar }: { texto: string; onCerrar: () => void
   );
 }
 
-export function Avatar({ iniciales, grande }: { iniciales: string; grande?: boolean }) {
+export function Avatar({ iniciales, grande, mediano }: { iniciales: string; grande?: boolean; mediano?: boolean }) {
+  const medida = grande
+    ? "h-20 w-20 text-2xl sm:h-24 sm:w-24 sm:text-3xl"
+    : mediano
+      ? "h-14 w-14 text-lg md:h-10 md:w-10 md:text-sm"
+      : "h-14 w-14 text-lg";
+
   return (
     <span
       aria-hidden
-      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-ink to-blue font-semibold text-white ${
-        grande ? "h-20 w-20 text-2xl sm:h-24 sm:w-24 sm:text-3xl" : "h-14 w-14 text-lg"
-      }`}
+      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-ink to-blue font-semibold text-white ${medida}`}
     >
       {iniciales}
     </span>

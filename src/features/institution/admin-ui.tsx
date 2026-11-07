@@ -238,7 +238,7 @@ export function MenuAcciones({
   puntosEnCelular?: boolean;
   extra?: { texto: string; onClick: () => void };
   onEditar: () => void;
-  onEliminar: () => void;
+  onEliminar?: () => void;
 }) {
   const [abierto, setAbierto] = useState(false);
 
@@ -277,9 +277,11 @@ export function MenuAcciones({
               {extra.texto}
             </button>
           )}
-          <button type="button" onClick={onEliminar} className="px-4 py-2 text-left text-red-700 hover:bg-red-50">
-            {confirmando ? "¿Seguro? Tocá de nuevo" : "Eliminar"}
-          </button>
+          {onEliminar && (
+            <button type="button" onClick={onEliminar} className="px-4 py-2 text-left text-red-700 hover:bg-red-50">
+              {confirmando ? "¿Seguro? Tocá de nuevo" : "Eliminar"}
+            </button>
+          )}
         </div>
       )}
     </div>
