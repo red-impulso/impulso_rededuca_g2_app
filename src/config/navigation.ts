@@ -33,8 +33,26 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Mis hijos', href: '/hijos', roles: ['guardian'] },
   { label: 'Dirección', href: '/tablero', roles: ['admin', 'director'] },
   { label: 'Institución', href: '/institucion', roles: ['admin', 'director'] },
+  { label: 'Alumnos', href: '/alumnos', roles: ['admin', 'director'] },
+];
+
+const MAX_ITEMS_ABAJO = 5;
+const ROLES_DIRECCION: Role[] = ['admin', 'director'];
+
+// Barra inferior del celular para dirección, tal como la dibujó UX/UI.
+// El resto de las secciones queda en el menú ☰.
+const ITEMS_ABAJO_DIRECCION: NavItem[] = [
+  { label: 'Inicio', href: '/inicio', roles: ROLES_DIRECCION },
+  { label: 'Institución', href: '/institucion', roles: ROLES_DIRECCION },
+  { label: 'Cursos', href: '/institucion/cursos', roles: ROLES_DIRECCION },
+  { label: 'Materias', href: '/institucion/materias', roles: ROLES_DIRECCION },
+  { label: 'Alumnos', href: '/alumnos', roles: ROLES_DIRECCION },
 ];
 
 export function getNavItems(role: Role): NavItem[] {
   return NAV_ITEMS.filter((item) => item.roles.includes(role));
+}
+
+export function getBottomNavItems(role: Role): NavItem[] {
+  return ROLES_DIRECCION.includes(role) ? ITEMS_ABAJO_DIRECCION : getNavItems(role).slice(0, MAX_ITEMS_ABAJO);
 }

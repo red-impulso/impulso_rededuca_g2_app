@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { NAV_ITEMS, getNavItems } from './navigation';
+import { NAV_ITEMS, getBottomNavItems, getNavItems } from './navigation';
 
 const soloDocentes = NAV_ITEMS.filter(
   (item) => item.roles.length === 1 && item.roles[0] === 'teacher'
@@ -45,6 +45,13 @@ describe('getNavItems', () => {
     expect(conTablero).toEqual(['admin', 'director']);
   });
 
+  it('Alumnos es solo para admin y director', () => {
+    const conAlumnos = (['admin', 'director', 'teacher', 'guardian', 'student'] as const).filter(
+      (role) => getNavItems(role).some((item) => item.href === '/alumnos')
+    );
+    expect(conAlumnos).toEqual(['admin', 'director']);
+  });
+
   it('Institución es solo para admin y director', () => {
     const conInstitucion = (['admin', 'director', 'teacher', 'guardian', 'student'] as const).filter(
       (role) => getNavItems(role).some((item) => item.href === '/institucion')
@@ -65,5 +72,22 @@ describe('getNavItems', () => {
       expect(hrefs).toContain('/inicio');
       expect(hrefs).toContain('/comunicados');
     }
+  });
+});
+
+describe('getBottomNavItems', () => {
+  it.each(['admin', 'director'] as const)('%s ve la barra del diseño de UX/UI', (role) => {
+    expect(getBottomNavItems(role).map((item) => item.label)).toEqual([
+      'Inicio',
+      'Institución',
+      'Cursos',
+      'Materias',
+      'Alumnos',
+    ]);
+  });
+
+  it('los demás roles ven sus primeras secciones, hasta 5', () => {
+    expect(getBottomNavItems('guardian')).toEqual(getNavItems('guardian').slice(0, 5));
+    expect(getBottomNavItems('teacher').length).toBeLessThanOrEqual(5);
   });
 });
