@@ -45,6 +45,13 @@ describe('getNavItems', () => {
     expect(conTablero).toEqual(['admin', 'director']);
   });
 
+  it('Docentes es solo para admin y director', () => {
+    const conDocentes = (['admin', 'director', 'teacher', 'guardian', 'student'] as const).filter(
+      (role) => getNavItems(role).some((item) => item.href === '/docentes')
+    );
+    expect(conDocentes).toEqual(['admin', 'director']);
+  });
+
   it('Alumnos es solo para admin y director', () => {
     const conAlumnos = (['admin', 'director', 'teacher', 'guardian', 'student'] as const).filter(
       (role) => getNavItems(role).some((item) => item.href === '/alumnos')

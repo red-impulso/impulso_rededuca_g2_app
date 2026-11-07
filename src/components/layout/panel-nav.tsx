@@ -23,6 +23,7 @@ const ICONOS: Record<string, ReactNode> = {
   ),
   "/tablero": <path d="M4 20V10M10 20V4M16 20v-7M21 20H3" />,
   "/institucion": <path d="M3 21h18M5 21V10m14 11V10M3 10l9-6 9 6M9 21v-6h6v6" />,
+  "/docentes": <path d="m2 9 10-4 10 4-10 4zM6 11v5c3 2 9 2 12 0v-5" />,
   "/institucion/cursos": <path d="M5 4h14v16H5zM9 8h6" />,
   "/institucion/materias": <path d="M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v14" />,
   "/alumnos": (

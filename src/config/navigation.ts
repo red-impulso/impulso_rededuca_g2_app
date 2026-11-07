@@ -34,6 +34,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Dirección', href: '/tablero', roles: ['admin', 'director'] },
   { label: 'Institución', href: '/institucion', roles: ['admin', 'director'] },
   { label: 'Alumnos', href: '/alumnos', roles: ['admin', 'director'] },
+  { label: 'Docentes', href: '/docentes', roles: ['admin', 'director'] },
 ];
 
 const MAX_ITEMS_ABAJO = 5;
