@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, apiFetch } from '../../lib/api';
@@ -71,8 +71,16 @@ describe('AlumnoFicha', () => {
 
     expect(screen.getByRole('link', { name: 'Volver a la lista' }).getAttribute('href')).toBe('/alumnos');
     expect(screen.getByText('DNI: 42.345.678')).toBeTruthy();
-    expect(screen.getByText('Año: 2026')).toBeTruthy();
+    expect(screen.getByText('Curso: 1° Año A')).toBeTruthy();
+    expect(screen.getByText('Turno: Mañana')).toBeTruthy();
     expect(screen.getByRole('tab', { name: 'Datos personales' }).getAttribute('aria-selected')).toBe('true');
+    expect(screen.getAllByRole('tab').map((tab) => tab.getAttribute('aria-label'))).toEqual([
+      'Datos personales',
+      'Académica',
+      'Familia',
+      'Tutores',
+      'Notas',
+    ]);
 
     const datos = within(screen.getByRole('tabpanel'));
     expect(datos.getByText('12/03/2010')).toBeTruthy();
@@ -90,23 +98,47 @@ describe('AlumnoFicha', () => {
     expect(screen.queryByText(/Última actualización/)).toBeNull();
   });
 
-  it('la pestaña Familia muestra los tutores', async () => {
-    await abrir();
+  it('la pestaña Familia resume el contacto y quiénes están a cargo', async () => {
+    await abrir(ficha(), [{ id: 'g1', fullName: 'Tutora Demo', relationship: 'madre', phone: null, email: null }]);
 
     await pestana('Familia');
 
-    expect(await screen.findByText('Tutora Demo')).toBeTruthy();
-    expect(mockApi).toHaveBeenCalledWith('/students/s1/guardians', { institutionId: 'esc-1' });
+    const panel = within(screen.getByRole('tabpanel'));
+    expect(await panel.findByText('Tutora Demo (Madre)')).toBeTruthy();
+    expect(panel.getByText('Calle de Prueba 123')).toBeTruthy();
+    expect(panel.getByText('388 000 0000')).toBeTruthy();
   });
 
-  it('la pestaña Académica pide notas y asistencia del alumno', async () => {
+  it('la pestaña Familia sin tutores lo dice', async () => {
+    await abrir(ficha(), []);
+
+    await pestana('Familia');
+
+    expect(await screen.findByText('Sin tutores vinculados')).toBeTruthy();
+  });
+
+  it('la pestaña Tutores muestra los tutores vinculados', async () => {
+    await abrir();
+
+    await pestana('Tutores');
+
+    expect(await screen.findByText('Tutora Demo')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Tutores (1)' })).toBeTruthy();
+  });
+
+  it('la pestaña Académica pide la asistencia y Notas las calificaciones', async () => {
     await abrir();
 
     await pestana('Académica');
 
-    await screen.findByText('Sin registros');
-    expect(mockApi).toHaveBeenCalledWith('/students/s1/grades', { institutionId: 'esc-1' });
-    expect(mockApi).toHaveBeenCalledWith('/students/s1/attendance', { institutionId: 'esc-1' });
+    await waitFor(() =>
+      expect(mockApi).toHaveBeenCalledWith('/students/s1/attendance', { institutionId: 'esc-1' })
+    );
+    expect(mockApi).not.toHaveBeenCalledWith('/students/s1/grades', { institutionId: 'esc-1' });
+
+    await pestana('Notas');
+
+    await waitFor(() => expect(mockApi).toHaveBeenCalledWith('/students/s1/grades', { institutionId: 'esc-1' }));
   });
 
   it('al editar envía solo lo que cambió y confirma', async () => {

@@ -13,6 +13,7 @@ import { ApiError, apiFetch } from "../../lib/api";
 import { StudentAttendance } from "../guardians/student-attendance";
 import { StudentGrades } from "../guardians/student-grades";
 import { StudentGuardians } from "../guardians/student-guardians";
+import { etiquetaParentesco, type TutorVinculado } from "../guardians/tutores";
 import { Insignia, TARJETA } from "../institution/admin-ui";
 import { etiquetaTurno, type Course } from "../institution/institution";
 import { AlumnoForm } from "./alumno-form";
@@ -31,8 +32,11 @@ type Carga =
   | { status: "error"; mensaje?: string }
   | { status: "ready"; alumno: StudentFile; cursos: Course[] };
 
-const PESTANAS = ["Datos personales", "Académica", "Familia"] as const;
+const PESTANAS = ["Datos personales", "Académica", "Familia", "Tutores", "Notas"] as const;
 type Pestana = (typeof PESTANAS)[number];
+
+// En el celular el nombre largo no entra.
+const NOMBRE_CORTO: Partial<Record<Pestana, string>> = { "Datos personales": "Datos" };
 
 const VOLVER = { href: "/alumnos", nombre: "Volver a la lista" };
 
@@ -150,6 +154,70 @@ function DatosPersonales({ alumno }: { alumno: StudentFile }) {
   );
 }
 
+function Familia({ institutionId, alumno }: { institutionId: string; alumno: StudentFile }) {
+  const [tutores, setTutores] = useState<TutorVinculado[] | "error" | null>(null);
+
+  useEffect(() => {
+    let cancelado = false;
+
+    apiFetch<TutorVinculado[]>(`/students/${alumno.id}/guardians`, { institutionId })
+      .then((lista) => {
+        if (!cancelado) setTutores(lista);
+      })
+      .catch(() => {
+        if (!cancelado) setTutores("error");
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, [institutionId, alumno.id]);
+
+  function aCargo(): string {
+    if (tutores === null) return "Cargando...";
+    if (tutores === "error") return "No se pudieron cargar los tutores";
+    if (tutores.length === 0) return "Sin tutores vinculados";
+    return tutores
+      .map((tutor) => {
+        const nombre = tutor.fullName ?? "Sin nombre";
+        return tutor.relationship ? `${nombre} (${etiquetaParentesco(tutor.relationship)})` : nombre;
+      })
+      .join(", ");
+  }
+
+  return (
+    <Seccion titulo="Familia" icono={<path d="m3 11 9-8 9 8M5 10v10h14V10" />}>
+      <div className="py-1">
+        <Dato
+          etiqueta="A cargo"
+          valor={aCargo()}
+          icono={
+            <>
+              <circle cx="9" cy="8" r="3.5" />
+              <path d="M2.5 20c0-4 3-6.5 6.5-6.5s6.5 2.5 6.5 6.5M16 5a3.5 3.5 0 0 1 0 6.5M18 14c2 .8 3.5 3 3.5 6" />
+            </>
+          }
+        />
+        <Dato
+          etiqueta="Domicilio"
+          valor={alumno.address}
+          icono={
+            <>
+              <path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z" />
+              <circle cx="12" cy="10" r="2.5" />
+            </>
+          }
+        />
+        <Dato
+          etiqueta="Teléfono de contacto"
+          valor={alumno.phone}
+          icono={<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z" />}
+        />
+      </div>
+    </Seccion>
+  );
+}
+
 export function AlumnoFicha({ institutionId, studentId }: { institutionId: string; studentId: string }) {
   const [carga, setCarga] = useState<Carga>({ status: "loading" });
   const [intento, setIntento] = useState(0);
@@ -243,7 +311,6 @@ export function AlumnoFicha({ institutionId, studentId }: { institutionId: strin
   }
 
   const activo = alumno.status === "active";
-  const ciclo = cursos.find((curso) => curso.id === alumno.course?.id)?.schoolYear;
 
   return (
     <>
@@ -255,17 +322,22 @@ export function AlumnoFicha({ institutionId, studentId }: { institutionId: strin
           <div className="min-w-0 flex-1 basis-44">
             <h2 className="break-words text-xl font-semibold text-ink">{nombreCompleto(alumno)}</h2>
             {alumno.dni && <p className="text-ink">DNI: {formatoDni(alumno.dni)}</p>}
-            <p className="flex flex-wrap gap-x-3 text-sm text-ink">
-              {alumno.course && <span>Curso: {cursoAlumno(alumno.course)}</span>}
-              {ciclo !== undefined && <span>Año: {ciclo}</span>}
-            </p>
+            {alumno.course && (
+              <p className="flex flex-wrap gap-x-3 text-sm text-ink">
+                <span>Curso: {cursoAlumno(alumno.course)}</span>
+                <span aria-hidden className="hidden text-blue/30 sm:inline">
+                  |
+                </span>
+                <span>Turno: {etiquetaTurno(alumno.course.shift)}</span>
+              </p>
+            )}
           </div>
           <div className="flex shrink-0 items-center gap-2 max-sm:w-full max-sm:justify-end sm:flex-col sm:items-end">
             <Insignia activa={activo}>{activo ? "Activo" : "Inactivo"}</Insignia>
             <button
               type="button"
               onClick={() => setEditando(true)}
-              className="flex items-center gap-1.5 rounded-full border border-accent px-3 py-1 text-sm font-medium text-accent"
+              className="flex items-center gap-1.5 rounded-xl border border-blue px-3 py-1.5 text-sm font-medium text-blue"
             >
               <Icono className="h-4 w-4">
                 <path d="m4 20 1-4L16 5l3 3L8 19zM14 7l3 3" />
@@ -275,17 +347,19 @@ export function AlumnoFicha({ institutionId, studentId }: { institutionId: strin
           </div>
         </div>
 
-        <div role="tablist" aria-label="Secciones de la ficha" className="grid grid-cols-[1.5fr_1fr_1fr] gap-2">
+        <div role="tablist" aria-label="Secciones de la ficha" className="flex gap-1.5">
           {PESTANAS.map((nombre) => (
             <button
               key={nombre}
               type="button"
               role="tab"
+              aria-label={nombre}
               aria-selected={pestana === nombre}
               onClick={() => setPestana(nombre)}
-              className="rounded-xl bg-blue/5 px-1 py-2.5 text-sm font-medium text-ink aria-selected:bg-accent aria-selected:text-white"
+              className="flex-auto rounded-xl bg-blue/5 px-1 py-2.5 text-xs font-medium text-ink aria-selected:bg-accent aria-selected:text-white sm:px-3 sm:text-sm"
             >
-              {nombre}
+              <span className="sm:hidden">{NOMBRE_CORTO[nombre] ?? nombre}</span>
+              <span className="hidden sm:inline">{nombre}</span>
             </button>
           ))}
         </div>
@@ -293,13 +367,10 @@ export function AlumnoFicha({ institutionId, studentId }: { institutionId: strin
 
       <div role="tabpanel" aria-label={pestana}>
         {pestana === "Datos personales" && <DatosPersonales alumno={alumno} />}
-        {pestana === "Académica" && (
-          <div className="flex flex-col gap-4">
-            <StudentGrades institutionId={institutionId} studentId={studentId} />
-            <StudentAttendance institutionId={institutionId} studentId={studentId} />
-          </div>
-        )}
-        {pestana === "Familia" && <StudentGuardians institutionId={institutionId} studentId={studentId} />}
+        {pestana === "Académica" && <StudentAttendance institutionId={institutionId} studentId={studentId} />}
+        {pestana === "Familia" && <Familia institutionId={institutionId} alumno={alumno} />}
+        {pestana === "Tutores" && <StudentGuardians institutionId={institutionId} studentId={studentId} />}
+        {pestana === "Notas" && <StudentGrades institutionId={institutionId} studentId={studentId} />}
       </div>
     </>
   );

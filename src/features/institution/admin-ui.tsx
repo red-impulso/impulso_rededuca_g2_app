@@ -229,11 +229,13 @@ export function MenuAcciones({
   confirmando,
   puntosEnCelular,
   extra,
+  textoEliminar = "Eliminar",
   onEditar,
   onEliminar,
 }: {
   nombre: string;
   confirmando: boolean;
+  textoEliminar?: string;
   // Como en el dibujo de usuarios: "…" en el celular y "⋮" en la computadora.
   puntosEnCelular?: boolean;
   extra?: { texto: string; onClick: () => void };
@@ -279,7 +281,7 @@ export function MenuAcciones({
           )}
           {onEliminar && (
             <button type="button" onClick={onEliminar} className="px-4 py-2 text-left text-red-700 hover:bg-red-50">
-              {confirmando ? "¿Seguro? Tocá de nuevo" : "Eliminar"}
+              {confirmando ? "¿Seguro? Tocá de nuevo" : textoEliminar}
             </button>
           )}
         </div>
