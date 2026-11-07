@@ -38,6 +38,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Alumnos', href: '/alumnos', roles: ['admin', 'director'] },
   { label: 'Docentes', href: '/docentes', roles: ['admin', 'director'] },
   { label: 'Usuarios', href: '/usuarios', roles: ['admin'] },
+  { label: 'Interesados', href: '/interesados', roles: ['admin'] },
   { label: 'Escuelas', href: '/escuelas', roles: ['admin'] },
 ];
 
@@ -60,7 +61,7 @@ export function getBottomNavItems(role: Role, pathname = ''): NavItem[] {
   if (!ROLES_DIRECCION.includes(role)) return items.slice(0, MAX_ITEMS_ABAJO);
 
   const fijos = items.filter((item) => HREFS_ABAJO_DIRECCION.includes(item.href));
-  const resto = items.filter((item) => ['/alumnos', '/docentes', '/usuarios', '/escuelas'].includes(item.href));
+  const resto = items.filter((item) => ['/alumnos', '/docentes', '/usuarios', '/interesados', '/escuelas'].includes(item.href));
   const ultimo = resto.find((item) => pathname.startsWith(item.href)) ?? resto[0];
   return [...fijos, ultimo];
 }

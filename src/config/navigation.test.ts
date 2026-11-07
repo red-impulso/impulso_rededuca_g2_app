@@ -99,6 +99,23 @@ describe('Usuarios y Escuelas', () => {
   });
 });
 
+describe('Interesados', () => {
+  it("getNavItems('teacher') no incluye Interesados", () => {
+    expect(getNavItems('teacher').map((item) => item.label)).not.toContain('Interesados');
+  });
+
+  it('Interesados es solo para admin', () => {
+    const conInteresados = (['admin', 'director', 'teacher', 'guardian', 'student'] as const).filter((role) =>
+      getNavItems(role).some((item) => item.href === '/interesados')
+    );
+    expect(conInteresados).toEqual(['admin']);
+  });
+
+  it('en el celular, el último lugar muestra Interesados cuando está abierta', () => {
+    expect(getBottomNavItems('admin', '/interesados').at(-1)?.href).toBe('/interesados');
+  });
+});
+
 describe('getBottomNavItems', () => {
   it('el último lugar de dirección muestra la sección abierta', () => {
     const ultimo = (role: 'admin' | 'director', pathname: string) =>
