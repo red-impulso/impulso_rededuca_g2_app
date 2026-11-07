@@ -24,11 +24,6 @@ export interface StudentFile extends Student {
   updatedAt: string | null;
 }
 
-export interface Guardian {
-  id: string;
-  fullName: string | null;
-}
-
 // "Prueba, Ana"
 export function nombreLista(alumno: Pick<Student, "firstName" | "lastName">): string {
   return [alumno.lastName, alumno.firstName].filter(Boolean).join(", ");
