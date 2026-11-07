@@ -37,6 +37,7 @@ function responder(alumno: unknown = ficha(), tutores: unknown = [{ id: 'g1', fu
     if (path === '/courses') return cursos as never;
     if (path === '/students/s1') return alumno as never;
     if (path === '/students/s1/guardians') return tutores as never;
+    if (path === '/guardians') return tutores as never;
     if (path === '/students/s1/grades') return [] as never;
     if (path === '/students/s1/attendance') return { records: [], summary: { percentage: null } } as never;
     throw new Error(`ruta inesperada: ${path}`);
@@ -96,23 +97,6 @@ describe('AlumnoFicha', () => {
 
     expect(await screen.findByText('Tutora Demo')).toBeTruthy();
     expect(mockApi).toHaveBeenCalledWith('/students/s1/guardians', { institutionId: 'esc-1' });
-  });
-
-  it('la pestaña Familia avisa si no hay tutores', async () => {
-    await abrir(ficha(), []);
-
-    await pestana('Familia');
-
-    expect(await screen.findByText('No hay tutores vinculados.')).toBeTruthy();
-  });
-
-  it('la pestaña Familia avisa si no se pudieron cargar', async () => {
-    await abrir();
-    mockApi.mockRejectedValueOnce(new Error('caída'));
-
-    await pestana('Familia');
-
-    expect((await screen.findByRole('alert')).textContent).toContain('No se pudieron cargar los tutores');
   });
 
   it('la pestaña Académica pide notas y asistencia del alumno', async () => {

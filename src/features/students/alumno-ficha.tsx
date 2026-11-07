@@ -5,6 +5,7 @@ import { Icono } from "../../components/ui/estado";
 import { ApiError, apiFetch } from "../../lib/api";
 import { StudentAttendance } from "../guardians/student-attendance";
 import { StudentGrades } from "../guardians/student-grades";
+import { StudentGuardians } from "../guardians/student-guardians";
 import { Insignia, TARJETA } from "../institution/admin-ui";
 import { etiquetaTurno, type Course } from "../institution/institution";
 import { AlumnoForm } from "./alumno-form";
@@ -15,7 +16,6 @@ import {
   formatoFecha,
   inicialesAlumno,
   nombreCompleto,
-  type Guardian,
   type StudentFile,
 } from "./students";
 
@@ -140,60 +140,6 @@ function DatosPersonales({ alumno }: { alumno: StudentFile }) {
         </div>
       )}
     </div>
-  );
-}
-
-function Familia({ institutionId, studentId }: { institutionId: string; studentId: string }) {
-  const [tutores, setTutores] = useState<Guardian[] | "loading" | "error">("loading");
-
-  useEffect(() => {
-    let cancelado = false;
-
-    apiFetch<Guardian[]>(`/students/${studentId}/guardians`, { institutionId })
-      .then((lista) => {
-        if (!cancelado) setTutores(lista);
-      })
-      .catch(() => {
-        if (!cancelado) setTutores("error");
-      });
-
-    return () => {
-      cancelado = true;
-    };
-  }, [institutionId, studentId]);
-
-  if (tutores === "loading") return <p>Cargando tutores...</p>;
-
-  if (tutores === "error") {
-    return (
-      <p role="alert" className="text-red-600">
-        No se pudieron cargar los tutores. Probá de nuevo en un rato.
-      </p>
-    );
-  }
-
-  return (
-    <Seccion
-      titulo="Familia"
-      icono={
-        <>
-          <circle cx="9" cy="8" r="3.5" />
-          <path d="M2.5 20c0-4 3-6.5 6.5-6.5s6.5 2.5 6.5 6.5M16 5a3.5 3.5 0 0 1 0 6.5M18 14c2 .8 3.5 3 3.5 6" />
-        </>
-      }
-    >
-      {tutores.length === 0 ? (
-        <p className="px-4 py-3 text-gray-600">No hay tutores vinculados.</p>
-      ) : (
-        <ul className="divide-y divide-blue/10">
-          {tutores.map((tutor) => (
-            <li key={tutor.id} className="px-4 py-3 text-ink">
-              {tutor.fullName}
-            </li>
-          ))}
-        </ul>
-      )}
-    </Seccion>
   );
 }
 
@@ -346,7 +292,7 @@ export function AlumnoFicha({ institutionId, studentId }: { institutionId: strin
             <StudentAttendance institutionId={institutionId} studentId={studentId} />
           </div>
         )}
-        {pestana === "Familia" && <Familia institutionId={institutionId} studentId={studentId} />}
+        {pestana === "Familia" && <StudentGuardians institutionId={institutionId} studentId={studentId} />}
       </div>
     </>
   );
