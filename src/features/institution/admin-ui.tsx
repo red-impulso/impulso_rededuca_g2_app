@@ -159,11 +159,17 @@ export function Paginacion({
   total,
   pagina,
   nombre,
+  numerada,
+  separador = "-",
+  colorActual = "bg-blue",
   onCambiar,
 }: {
   total: number;
   pagina: number;
   nombre: string;
+  numerada?: boolean;
+  separador?: string;
+  colorActual?: string;
   onCambiar: (pagina: number) => void;
 }) {
   const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
@@ -174,7 +180,7 @@ export function Paginacion({
   return (
     <div className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
       <p>
-        Mostrando {desde} - {hasta} de {total} {nombre}
+        Mostrando {desde} {separador} {hasta} de {total} {nombre}
       </p>
       <div className="flex items-center gap-1">
         <button
@@ -186,7 +192,24 @@ export function Paginacion({
         >
           ‹
         </button>
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue text-white">{pagina + 1}</span>
+        {numerada ? (
+          Array.from({ length: paginas }, (_, numero) => (
+            <button
+              key={numero}
+              type="button"
+              aria-label={`Página ${numero + 1}`}
+              aria-current={numero === pagina ? "page" : undefined}
+              onClick={() => onCambiar(numero)}
+              className={`h-9 w-9 rounded-lg ${numero === pagina ? `${colorActual} text-white` : "border border-gray-200 bg-white"}`}
+            >
+              {numero + 1}
+            </button>
+          ))
+        ) : (
+          <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${colorActual} text-white`}>
+            {pagina + 1}
+          </span>
+        )}
         <button
           type="button"
           aria-label="Página siguiente"
@@ -204,11 +227,16 @@ export function Paginacion({
 export function MenuAcciones({
   nombre,
   confirmando,
+  puntosEnCelular,
+  extra,
   onEditar,
   onEliminar,
 }: {
   nombre: string;
   confirmando: boolean;
+  // Como en el dibujo de usuarios: "…" en el celular y "⋮" en la computadora.
+  puntosEnCelular?: boolean;
+  extra?: { texto: string; onClick: () => void };
   onEditar: () => void;
   onEliminar: () => void;
 }) {
@@ -223,13 +251,32 @@ export function MenuAcciones({
         onClick={() => setAbierto((actual) => !actual)}
         className="h-9 w-9 rounded-full text-xl font-semibold text-blue hover:bg-blue/10"
       >
-        ⋮
+        {puntosEnCelular ? (
+          <>
+            <span className="md:hidden">…</span>
+            <span className="hidden md:inline">⋮</span>
+          </>
+        ) : (
+          "⋮"
+        )}
       </button>
       {abierto && (
         <div className="absolute right-0 z-10 flex w-52 flex-col rounded-xl border border-gray-200 bg-white py-1 text-left text-sm shadow-lg">
           <button type="button" onClick={onEditar} className="px-4 py-2 text-left hover:bg-gray-100">
             Editar
           </button>
+          {extra && (
+            <button
+              type="button"
+              onClick={() => {
+                setAbierto(false);
+                extra.onClick();
+              }}
+              className="px-4 py-2 text-left hover:bg-gray-100"
+            >
+              {extra.texto}
+            </button>
+          )}
           <button type="button" onClick={onEliminar} className="px-4 py-2 text-left text-red-700 hover:bg-red-50">
             {confirmando ? "¿Seguro? Tocá de nuevo" : "Eliminar"}
           </button>

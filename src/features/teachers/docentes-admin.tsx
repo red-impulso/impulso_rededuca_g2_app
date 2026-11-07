@@ -6,7 +6,7 @@ import { Estado, Icono } from "../../components/ui/estado";
 import { ApiError, apiFetch } from "../../lib/api";
 import { Buscador, CAMPO, EstadoCargando, EstadoError, TARJETA } from "../institution/admin-ui";
 import { nombreCurso, type Course, type Subject, type Teacher } from "../institution/institution";
-import { Avatar } from "../students/alumnos-ui";
+import { Avatar } from "../../components/ui/pantalla-estado";
 import { normalizar } from "../students/students";
 
 // GET /teachers: cada docente trae las materias que dicta, con su curso.

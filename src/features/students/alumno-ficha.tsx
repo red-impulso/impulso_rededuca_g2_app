@@ -2,6 +2,13 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { Icono } from "../../components/ui/estado";
+import {
+  Avatar,
+  BOTON_NARANJA,
+  PantallaCargando,
+  PantallaError,
+  PantallaGuardada,
+} from "../../components/ui/pantalla-estado";
 import { ApiError, apiFetch } from "../../lib/api";
 import { StudentAttendance } from "../guardians/student-attendance";
 import { StudentGrades } from "../guardians/student-grades";
@@ -9,7 +16,7 @@ import { StudentGuardians } from "../guardians/student-guardians";
 import { Insignia, TARJETA } from "../institution/admin-ui";
 import { etiquetaTurno, type Course } from "../institution/institution";
 import { AlumnoForm } from "./alumno-form";
-import { AlumnoGuardado, AlumnosCargando, AlumnosError, Avatar, BOTON_NARANJA, TituloAlumnos } from "./alumnos-ui";
+import { TituloAlumnos } from "./alumnos-ui";
 import {
   cursoAlumno,
   formatoDni,
@@ -181,7 +188,7 @@ export function AlumnoFicha({ institutionId, studentId }: { institutionId: strin
     return (
       <>
         {titulo}
-        <AlumnosCargando titulo="Cargando alumno..." />
+        <PantallaCargando titulo="Cargando alumno..." />
       </>
     );
   }
@@ -190,7 +197,7 @@ export function AlumnoFicha({ institutionId, studentId }: { institutionId: strin
     return (
       <>
         {titulo}
-        <AlumnosError titulo="Error al cargar la ficha del alumno" texto={carga.mensaje} onReintentar={recargar} />
+        <PantallaError titulo="Error al cargar la ficha del alumno" texto={carga.mensaje} onReintentar={recargar} />
       </>
     );
   }
@@ -199,7 +206,7 @@ export function AlumnoFicha({ institutionId, studentId }: { institutionId: strin
     return (
       <>
         {titulo}
-        <AlumnoGuardado>
+        <PantallaGuardada>
           <button
             type="button"
             onClick={() => {
@@ -210,7 +217,7 @@ export function AlumnoFicha({ institutionId, studentId }: { institutionId: strin
           >
             Ver alumno
           </button>
-        </AlumnoGuardado>
+        </PantallaGuardada>
       </>
     );
   }

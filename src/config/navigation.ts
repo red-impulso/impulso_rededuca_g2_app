@@ -33,8 +33,12 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Mis hijos', href: '/hijos', roles: ['guardian'] },
   { label: 'Dirección', href: '/tablero', roles: ['admin', 'director'] },
   { label: 'Institución', href: '/institucion', roles: ['admin', 'director'] },
+  { label: 'Cursos', href: '/institucion/cursos', roles: ['admin', 'director'] },
+  { label: 'Materias', href: '/institucion/materias', roles: ['admin', 'director'] },
   { label: 'Alumnos', href: '/alumnos', roles: ['admin', 'director'] },
   { label: 'Docentes', href: '/docentes', roles: ['admin', 'director'] },
+  { label: 'Usuarios', href: '/usuarios', roles: ['admin'] },
+  { label: 'Escuelas', href: '/escuelas', roles: ['admin'] },
 ];
 
 const MAX_ITEMS_ABAJO = 5;
@@ -42,18 +46,21 @@ const ROLES_DIRECCION: Role[] = ['admin', 'director'];
 
 // Barra inferior del celular para dirección, tal como la dibujó UX/UI.
 // El resto de las secciones queda en el menú ☰.
-const ITEMS_ABAJO_DIRECCION: NavItem[] = [
-  { label: 'Inicio', href: '/inicio', roles: ROLES_DIRECCION },
-  { label: 'Institución', href: '/institucion', roles: ROLES_DIRECCION },
-  { label: 'Cursos', href: '/institucion/cursos', roles: ROLES_DIRECCION },
-  { label: 'Materias', href: '/institucion/materias', roles: ROLES_DIRECCION },
-  { label: 'Alumnos', href: '/alumnos', roles: ROLES_DIRECCION },
-];
+const HREFS_ABAJO_DIRECCION = ['/inicio', '/institucion', '/institucion/cursos', '/institucion/materias'];
 
-export function getNavItems(role: Role): NavItem[] {
-  return NAV_ITEMS.filter((item) => item.roles.includes(role));
+// Quien trabaja en varias escuelas ve Escuelas aunque no sea admin.
+export function getNavItems(role: Role, variasEscuelas = false): NavItem[] {
+  return NAV_ITEMS.filter((item) => item.roles.includes(role) || (variasEscuelas && item.href === '/escuelas'));
 }
 
-export function getBottomNavItems(role: Role): NavItem[] {
-  return ROLES_DIRECCION.includes(role) ? ITEMS_ABAJO_DIRECCION : getNavItems(role).slice(0, MAX_ITEMS_ABAJO);
+// El último lugar de dirección es la sección abierta, si es una de las que no
+// entran en la barra; si no, Alumnos.
+export function getBottomNavItems(role: Role, pathname = ''): NavItem[] {
+  const items = getNavItems(role);
+  if (!ROLES_DIRECCION.includes(role)) return items.slice(0, MAX_ITEMS_ABAJO);
+
+  const fijos = items.filter((item) => HREFS_ABAJO_DIRECCION.includes(item.href));
+  const resto = items.filter((item) => ['/alumnos', '/docentes', '/usuarios', '/escuelas'].includes(item.href));
+  const ultimo = resto.find((item) => pathname.startsWith(item.href)) ?? resto[0];
+  return [...fijos, ultimo];
 }

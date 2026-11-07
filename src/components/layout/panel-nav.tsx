@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { getBottomNavItems, getNavItems, ROLE_LABELS, type NavItem } from "../../config/navigation";
 import { NotificationBell } from "../../features/notifications/notification-bell";
+import { ICONO_ESCUELA, InstitutionSwitcher } from "../../features/session/institution-switcher";
 import { useSession } from "../../features/session/use-session";
 import { BotonSalir } from "../auth/boton-salir";
 import { LogoAnimado } from "../brand/logo-animado";
@@ -32,6 +33,13 @@ const ICONOS: Record<string, ReactNode> = {
       <path d="M4 21c0-4.5 3.5-7 8-7s8 2.5 8 7" />
     </>
   ),
+  "/usuarios": (
+    <>
+      <circle cx="9" cy="8" r="3.5" />
+      <path d="M2.5 20c0-4 3-6.5 6.5-6.5s6.5 2.5 6.5 6.5M16 5a3.5 3.5 0 0 1 0 6.5M18 14c2 .8 3.5 3 3.5 6" />
+    </>
+  ),
+  "/escuelas": ICONO_ESCUELA,
 };
 
 function iniciales(nombre: string | null): string {
@@ -141,7 +149,10 @@ function MenuUsuario({ nombre, rol }: { nombre: string | null; rol: string }) {
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-ink to-blue text-sm font-semibold text-white">
           {iniciales(nombre)}
         </span>
-        <span className="hidden text-sm font-medium md:block">{rol}</span>
+        <span className="hidden text-left leading-tight md:block">
+          <span className="block max-w-40 truncate text-sm font-semibold text-ink">{nombre}</span>
+          <span className="block text-xs text-gray-600">{rol}</span>
+        </span>
         <span aria-hidden className="hidden text-xs md:block">
           ▾
         </span>
@@ -163,16 +174,19 @@ export function PanelNav({ children }: { children: ReactNode }) {
 
   const membership = session.status === "ready" ? session.activeMembership : null;
   const nombre = session.status === "ready" ? session.profile.fullName : null;
-  const items = membership ? getNavItems(membership.role) : [];
-  const itemsAbajo = membership ? getBottomNavItems(membership.role) : [];
+  const variasEscuelas = session.status === "ready" && session.instituciones.length > 1;
+  const items = membership ? getNavItems(membership.role, variasEscuelas) : [];
+  const itemsAbajo = membership ? getBottomNavItems(membership.role, pathname) : [];
+  const actual = hrefActual(pathname, items);
   const actualAbajo = hrefActual(pathname, itemsAbajo);
 
   return (
     <div className="flex flex-1 flex-col">
       <header className="sticky top-0 z-20 border-b border-gray-200 bg-white/90 backdrop-blur">
-        <div className="flex items-center gap-4 px-4 py-2">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 md:flex-nowrap">
           <LogoAnimado size={40} conTexto />
           <Buscador items={items} />
+          <InstitutionSwitcher />
           <div className="ml-auto flex items-center gap-3">
             {membership && <NotificationBell institutionId={membership.institutionId} />}
             {membership && <MenuUsuario nombre={nombre} rol={ROLE_LABELS[membership.role]} />}
@@ -202,7 +216,7 @@ export function PanelNav({ children }: { children: ReactNode }) {
               <Enlace
                 key={item.href}
                 item={item}
-                actual={esActual(pathname, item.href)}
+                actual={item.href === actual}
                 onClick={() => setMenuAbierto(false)}
                 className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-white/10 aria-[current=page]:bg-blue"
               />
