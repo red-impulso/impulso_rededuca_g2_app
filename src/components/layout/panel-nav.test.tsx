@@ -20,12 +20,15 @@ vi.mock('next/navigation', () => ({
 
 const mockSession = vi.mocked(useSession);
 
-function sesion(role: string) {
+function sesion(role: string, escuelas = [{ id: 'esc-1', name: 'Escuela' }]) {
   mockSession.mockReturnValue({
     status: 'ready',
     profile: { id: 'u1', fullName: 'Laura Gómez', phone: null },
     memberships: [],
+    instituciones: escuelas,
     activeMembership: { id: 'm1', institutionId: 'esc-1', institutionName: 'Escuela', role },
+    cambiarInstitucion: vi.fn(),
+    reintentar: vi.fn(),
   } as ReturnType<typeof useSession>);
 }
 
@@ -54,8 +57,42 @@ describe('PanelNav', () => {
     pathname = '/institucion/cursos';
     render(<PanelNav>contenido</PanelNav>);
 
-    expect(lateral().getByRole('link', { name: 'Institución' }).getAttribute('aria-current')).toBe('page');
+    expect(lateral().getByRole('link', { name: 'Cursos' }).getAttribute('aria-current')).toBe('page');
+    expect(lateral().getByRole('link', { name: 'Institución' }).getAttribute('aria-current')).toBeNull();
     expect(lateral().getByRole('link', { name: 'Inicio' }).getAttribute('aria-current')).toBeNull();
+  });
+
+  it('el admin ve Usuarios y Escuelas; dirección no', () => {
+    sesion('admin');
+    render(<PanelNav>contenido</PanelNav>);
+
+    expect(lateral().getByRole('link', { name: 'Usuarios' }).getAttribute('href')).toBe('/usuarios');
+    expect(lateral().getByRole('link', { name: 'Escuelas' }).getAttribute('href')).toBe('/escuelas');
+    cleanup();
+
+    sesion('director');
+    render(<PanelNav>contenido</PanelNav>);
+
+    expect(lateral().queryByRole('link', { name: 'Usuarios' })).toBeNull();
+    expect(lateral().queryByRole('link', { name: 'Escuelas' })).toBeNull();
+  });
+
+  it('con varias escuelas aparece el selector en el header y Escuelas en el menú', () => {
+    sesion('teacher', [
+      { id: 'esc-1', name: 'Escuela' },
+      { id: 'esc-2', name: 'Otra escuela' },
+    ]);
+    render(<PanelNav>contenido</PanelNav>);
+
+    expect(screen.getByRole('combobox', { name: 'Escuela activa' })).toBeTruthy();
+    expect(lateral().getByRole('link', { name: 'Escuelas' })).toBeTruthy();
+  });
+
+  it('con una sola escuela no hay selector', () => {
+    sesion('teacher');
+    render(<PanelNav>contenido</PanelNav>);
+
+    expect(screen.queryByRole('combobox', { name: 'Escuela activa' })).toBeNull();
   });
 
   it('la barra inferior de dirección lleva a cursos, materias y alumnos', () => {

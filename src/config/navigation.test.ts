@@ -82,7 +82,34 @@ describe('getNavItems', () => {
   });
 });
 
+describe('Usuarios y Escuelas', () => {
+  it('Usuarios es solo para admin', () => {
+    const conUsuarios = (['admin', 'director', 'teacher', 'guardian', 'student'] as const).filter((role) =>
+      getNavItems(role).some((item) => item.href === '/usuarios')
+    );
+    expect(conUsuarios).toEqual(['admin']);
+  });
+
+  it('Escuelas aparece para admin y para quien trabaja en varias escuelas', () => {
+    const tieneEscuelas = (items: { href: string }[]) => items.some((item) => item.href === '/escuelas');
+
+    expect(tieneEscuelas(getNavItems('admin'))).toBe(true);
+    expect(tieneEscuelas(getNavItems('teacher'))).toBe(false);
+    expect(tieneEscuelas(getNavItems('teacher', true))).toBe(true);
+  });
+});
+
 describe('getBottomNavItems', () => {
+  it('el último lugar de dirección muestra la sección abierta', () => {
+    const ultimo = (role: 'admin' | 'director', pathname: string) =>
+      getBottomNavItems(role, pathname).at(-1)?.href;
+
+    expect(ultimo('admin', '/inicio')).toBe('/alumnos');
+    expect(ultimo('admin', '/docentes')).toBe('/docentes');
+    expect(ultimo('admin', '/usuarios')).toBe('/usuarios');
+    expect(ultimo('director', '/usuarios')).toBe('/alumnos');
+  });
+
   it.each(['admin', 'director'] as const)('%s ve la barra del diseño de UX/UI', (role) => {
     expect(getBottomNavItems(role).map((item) => item.label)).toEqual([
       'Inicio',

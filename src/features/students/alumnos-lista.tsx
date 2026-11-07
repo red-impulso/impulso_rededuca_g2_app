@@ -3,19 +3,18 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Icono } from "../../components/ui/estado";
+import {
+  Avatar,
+  BOTON_NARANJA,
+  PantallaCargando,
+  PantallaError,
+  PantallaGuardada,
+} from "../../components/ui/pantalla-estado";
 import { apiFetch } from "../../lib/api";
 import { Buscador, Insignia, POR_PAGINA, TARJETA } from "../institution/admin-ui";
 import type { Course } from "../institution/institution";
 import { AlumnoForm } from "./alumno-form";
-import {
-  AlumnoGuardado,
-  AlumnosCargando,
-  AlumnosError,
-  AlumnosVacio,
-  Avatar,
-  BOTON_NARANJA,
-  TituloAlumnos,
-} from "./alumnos-ui";
+import { AlumnosVacio, TituloAlumnos } from "./alumnos-ui";
 import {
   cursoAlumno,
   formatoDni,
@@ -132,7 +131,7 @@ export function AlumnosLista({ institutionId }: { institutionId: string }) {
     return (
       <>
         {titulo}
-        <AlumnosCargando titulo="Cargando alumnos..." />
+        <PantallaCargando titulo="Cargando alumnos..." />
       </>
     );
   }
@@ -141,7 +140,7 @@ export function AlumnosLista({ institutionId }: { institutionId: string }) {
     return (
       <>
         {titulo}
-        <AlumnosError
+        <PantallaError
           titulo="Error al cargar la lista de alumnos"
           onReintentar={() => {
             setCarga({ status: "loading" });
@@ -156,11 +155,11 @@ export function AlumnosLista({ institutionId }: { institutionId: string }) {
     return (
       <>
         {titulo}
-        <AlumnoGuardado>
+        <PantallaGuardada>
           <Link href={`/alumnos/${guardado}`} className={`inline-block ${BOTON_NARANJA}`}>
             Ver alumno
           </Link>
-        </AlumnoGuardado>
+        </PantallaGuardada>
       </>
     );
   }
