@@ -39,6 +39,7 @@ const ICONOS: Record<string, ReactNode> = {
       <path d="M2.5 20c0-4 3-6.5 6.5-6.5s6.5 2.5 6.5 6.5M16 5a3.5 3.5 0 0 1 0 6.5M18 14c2 .8 3.5 3 3.5 6" />
     </>
   ),
+  "/interesados": <path d="M4 5h16v14H4zM4 7l8 6 8-6" />,
   "/escuelas": ICONO_ESCUELA,
 };
 
