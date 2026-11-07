@@ -3,14 +3,12 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, type FormEvent, type ReactNode } from "react";
-import { getNavItems, ROLE_LABELS, type NavItem } from "../../config/navigation";
+import { getBottomNavItems, getNavItems, ROLE_LABELS, type NavItem } from "../../config/navigation";
 import { NotificationBell } from "../../features/notifications/notification-bell";
 import { useSession } from "../../features/session/use-session";
 import { BotonSalir } from "../auth/boton-salir";
 import { LogoAnimado } from "../brand/logo-animado";
 import { Icono } from "../ui/estado";
-
-const ITEMS_ABAJO = 5;
 
 const ICONOS: Record<string, ReactNode> = {
   "/inicio": <path d="m3 11 9-8 9 8M5 10v10h5v-6h4v6h5V10" />,
@@ -25,6 +23,14 @@ const ICONOS: Record<string, ReactNode> = {
   ),
   "/tablero": <path d="M4 20V10M10 20V4M16 20v-7M21 20H3" />,
   "/institucion": <path d="M3 21h18M5 21V10m14 11V10M3 10l9-6 9 6M9 21v-6h6v6" />,
+  "/institucion/cursos": <path d="M5 4h14v16H5zM9 8h6" />,
+  "/institucion/materias": <path d="M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v14" />,
+  "/alumnos": (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21c0-4.5 3.5-7 8-7s8 2.5 8 7" />
+    </>
+  ),
 };
 
 function iniciales(nombre: string | null): string {
@@ -37,6 +43,14 @@ function iniciales(nombre: string | null): string {
 
 function esActual(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+// La sección más precisa: en /institucion/cursos gana Cursos, no Institución.
+function hrefActual(pathname: string, items: NavItem[]): string | undefined {
+  return items
+    .map((item) => item.href)
+    .filter((href) => esActual(pathname, href))
+    .sort((a, b) => b.length - a.length)[0];
 }
 
 function Enlace({
@@ -149,6 +163,8 @@ export function PanelNav({ children }: { children: ReactNode }) {
   const membership = session.status === "ready" ? session.activeMembership : null;
   const nombre = session.status === "ready" ? session.profile.fullName : null;
   const items = membership ? getNavItems(membership.role) : [];
+  const itemsAbajo = membership ? getBottomNavItems(membership.role) : [];
+  const actualAbajo = hrefActual(pathname, itemsAbajo);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -199,14 +215,14 @@ export function PanelNav({ children }: { children: ReactNode }) {
 
       <nav
         aria-label="Menú inferior"
-        className="fixed inset-x-0 bottom-0 z-20 flex justify-around border-t border-gray-200 bg-white/95 px-1 py-1 backdrop-blur md:hidden"
+        className="fixed inset-x-2 bottom-2 z-20 flex justify-around overflow-hidden rounded-2xl bg-ink text-white shadow-lg md:hidden"
       >
-        {items.slice(0, ITEMS_ABAJO).map((item) => (
+        {itemsAbajo.map((item) => (
           <Enlace
             key={item.href}
             item={item}
-            actual={esActual(pathname, item.href)}
-            className="flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-1.5 text-[11px] text-gray-600 aria-[current=page]:font-semibold aria-[current=page]:text-blue"
+            actual={item.href === actualAbajo}
+            className="flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-2 text-[11px] aria-[current=page]:bg-accent aria-[current=page]:font-semibold"
           />
         ))}
       </nav>

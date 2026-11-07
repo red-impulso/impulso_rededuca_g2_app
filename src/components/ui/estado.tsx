@@ -42,7 +42,7 @@ export function Estado({
   );
 }
 
-export function Cargando() {
+export function Cargando({ bicolor }: { bicolor?: boolean }) {
   return (
     <svg viewBox="0 0 48 48" aria-hidden className="h-14 w-14 fill-blue motion-safe:animate-spin">
       {Array.from({ length: 12 }, (_, i) => (
@@ -52,6 +52,7 @@ export function Cargando() {
           cy="5"
           r="3"
           opacity={0.25 + (i / 12) * 0.75}
+          className={bicolor && i < 6 ? "fill-accent" : undefined}
           transform={`rotate(${i * 30} 24 24)`}
         />
       ))}

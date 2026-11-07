@@ -58,6 +58,24 @@ describe('PanelNav', () => {
     expect(lateral().getByRole('link', { name: 'Inicio' }).getAttribute('aria-current')).toBeNull();
   });
 
+  it('la barra inferior de dirección lleva a cursos, materias y alumnos', () => {
+    sesion('director');
+    render(<PanelNav>contenido</PanelNav>);
+
+    expect(inferior().getByRole('link', { name: 'Cursos' }).getAttribute('href')).toBe('/institucion/cursos');
+    expect(inferior().getByRole('link', { name: 'Materias' }).getAttribute('href')).toBe('/institucion/materias');
+    expect(inferior().getByRole('link', { name: 'Alumnos' }).getAttribute('href')).toBe('/alumnos');
+  });
+
+  it('en la barra inferior solo se marca la sección más precisa', () => {
+    sesion('admin');
+    pathname = '/institucion/cursos';
+    render(<PanelNav>contenido</PanelNav>);
+
+    expect(inferior().getByRole('link', { name: 'Cursos' }).getAttribute('aria-current')).toBe('page');
+    expect(inferior().getByRole('link', { name: 'Institución' }).getAttribute('aria-current')).toBeNull();
+  });
+
   it('muestra las iniciales y el rol, y el menú del usuario tiene Salir', async () => {
     sesion('teacher');
     render(<PanelNav>contenido</PanelNav>);
