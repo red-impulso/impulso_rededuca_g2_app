@@ -6,6 +6,7 @@ const RUTA_INGRESAR = "/ingresar";
 
 // El "portero": antes de abrir cualquier página se fija si hay sesión.
 // Sin sesión → a /ingresar. Con sesión y en /ingresar → a /inicio.
+// La portada (/) y /ingresar son públicas.
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -43,8 +44,9 @@ export async function proxy(request: NextRequest) {
   }
 
   const enIngresar = request.nextUrl.pathname === RUTA_INGRESAR;
+  const esPublica = enIngresar || request.nextUrl.pathname === "/";
 
-  if (!hayUsuario && !enIngresar) {
+  if (!hayUsuario && !esPublica) {
     return NextResponse.redirect(new URL(RUTA_INGRESAR, request.url));
   }
 

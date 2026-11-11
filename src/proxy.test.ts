@@ -24,6 +24,12 @@ describe('proxy', () => {
     expect(destino(await pedir('/inicio'))).toBe('http://localhost:3000/ingresar');
   });
 
+  it('la portada es pública: sin sesión deja pasar', async () => {
+    getUser.mockResolvedValue({ data: { user: null }, error: new AuthSessionMissingError() });
+
+    expect(destino(await pedir('/'))).toBeNull();
+  });
+
   it('con sesión deja pasar', async () => {
     getUser.mockResolvedValue({ data: { user: { id: 'u1' } }, error: null });
 

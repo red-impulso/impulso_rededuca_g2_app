@@ -12,7 +12,15 @@ type Carga =
   | { status: "error"; message: string }
   | { status: "ready"; announcements: Announcement[] };
 
-function Comunicados({ institutionId, role }: { institutionId: string; role: Role }) {
+function Comunicados({
+  institutionId,
+  role,
+  profileId,
+}: {
+  institutionId: string;
+  role: Role;
+  profileId: string;
+}) {
   const [carga, setCarga] = useState<Carga>({ status: "loading" });
 
   useEffect(() => {
@@ -44,6 +52,25 @@ function Comunicados({ institutionId, role }: { institutionId: string; role: Rol
     );
   }
 
+  function actualizar(actualizado: Announcement) {
+    setCarga((actual) =>
+      actual.status === "ready"
+        ? {
+            status: "ready",
+            announcements: actual.announcements.map((a) => (a.id === actualizado.id ? actualizado : a)),
+          }
+        : actual
+    );
+  }
+
+  function quitar(id: string) {
+    setCarga((actual) =>
+      actual.status === "ready"
+        ? { status: "ready", announcements: actual.announcements.filter((a) => a.id !== id) }
+        : actual
+    );
+  }
+
   return (
     <>
       {(role === "admin" || role === "director" || role === "teacher") && (
@@ -58,7 +85,16 @@ function Comunicados({ institutionId, role }: { institutionId: string; role: Rol
         </p>
       )}
 
-      {carga.status === "ready" && <AnnouncementsList announcements={carga.announcements} />}
+      {carga.status === "ready" && (
+        <AnnouncementsList
+          announcements={carga.announcements}
+          institutionId={institutionId}
+          role={role}
+          profileId={profileId}
+          onActualizado={actualizar}
+          onEliminado={quitar}
+        />
+      )}
     </>
   );
 }
@@ -83,6 +119,7 @@ export default function ComunicadosPage() {
           <Comunicados
             institutionId={session.activeMembership.institutionId}
             role={session.activeMembership.role}
+            profileId={session.profile.id}
           />
         ) : (
           <p>Tu usuario todavía no tiene una institución asignada.</p>

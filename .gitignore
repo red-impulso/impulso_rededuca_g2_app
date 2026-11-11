@@ -48,3 +48,6 @@ next-env.d.ts
 
 # configuración local de Claude Code
 .claude/
+
+# Local History de VS Code
+.history/
