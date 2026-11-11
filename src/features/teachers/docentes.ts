@@ -31,7 +31,7 @@ const COLORES = [
   { chip: "bg-blue/10 text-blue", solido: "bg-blue" },
   { chip: "bg-secundario/10 text-secundario", solido: "bg-secundario" },
   { chip: "bg-green/15 text-verde-fuerte", solido: "bg-green" },
-  { chip: "bg-accent/15 text-naranja-fuerte", solido: "bg-accent" },
+  { chip: "bg-accent/15 text-blue", solido: "bg-accent" },
   { chip: "bg-celeste/20 text-celeste-fuerte", solido: "bg-celeste" },
 ];
 

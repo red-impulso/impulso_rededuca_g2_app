@@ -22,9 +22,10 @@
   --color-blanco: #ffffff;
   --color-rojo: #d64545;
 
-  /* Misma familia de color pero más oscuras: texto y bordes con AA. */
+  /* Misma familia de color pero más oscuras: texto y bordes con AA.
+     Sin "naranja fuerte": sobre fondos naranja el texto va en azul
+     (text-blue), un naranja oscuro se lee marrón. */
   --color-celeste-fuerte: #0e7f93;
-  --color-naranja-fuerte: #8a5d00;
   --color-verde-fuerte: #2e7d32;
 
   /* Alias heredados (los componentes ya escritos los usan). */

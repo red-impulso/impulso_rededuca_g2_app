@@ -93,7 +93,7 @@ export function PantallaError({
         <Estado
           ilustracion={
             <Circulo fondo={tono === "rojo" ? "bg-rojo/10" : "bg-accent/15"}>
-              <Icono className={`h-14 w-14 ${tono === "rojo" ? "text-rojo" : "text-naranja-fuerte"}`}>
+              <Icono className={`h-14 w-14 ${tono === "rojo" ? "text-rojo" : "text-blue"}`}>
                 <path d="M12 3 22.5 21h-21zM12 10v5M12 18v.5" />
               </Icono>
             </Circulo>

@@ -23,7 +23,7 @@ export const ESTADOS: { value: EstadoPostulacion; filtro: string; etiqueta: stri
 ];
 
 export const COLOR_ESTADO: Record<EstadoPostulacion, string> = {
-  new: "bg-accent/15 text-naranja-fuerte",
+  new: "bg-accent/15 text-blue",
   contacted: "bg-green/15 text-verde-fuerte",
   discarded: "bg-gray-200 text-gray-700",
 };

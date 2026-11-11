@@ -19,7 +19,7 @@ export const ETIQUETA_ROL: Record<Role, string> = {
 };
 
 export const COLOR_ROL: Record<Role, string> = {
-  admin: "bg-accent/15 text-naranja-fuerte",
+  admin: "bg-accent/15 text-blue",
   director: "bg-green/15 text-verde-fuerte",
   teacher: "bg-secundario/10 text-secundario",
   guardian: "bg-blue/10 text-blue",

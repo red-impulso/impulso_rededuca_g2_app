@@ -15,7 +15,7 @@ const VARIANTES = {
   acento: "bg-naranja text-ink hover:brightness-95",
   celeste: "bg-celeste text-ink hover:brightness-95",
   outlineNaranja:
-    "border-2 border-naranja bg-transparent text-naranja-fuerte hover:bg-naranja/15",
+    "border-2 border-naranja bg-transparent text-blue hover:bg-naranja/15",
   outline: "border border-primario bg-transparent text-primario hover:bg-primario/10",
   peligro: "bg-rojo text-white hover:brightness-110",
   suave: "bg-primario/10 text-primario hover:bg-primario/15",

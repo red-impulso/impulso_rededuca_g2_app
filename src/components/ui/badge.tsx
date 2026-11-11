@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 // paleta para que el texto siempre pase contraste AA sobre el fondo tenue.
 const TONOS = {
   verde: "border-verde/30 bg-verde/15 text-verde-fuerte",
-  naranja: "border-naranja/40 bg-naranja/20 text-naranja-fuerte",
+  naranja: "border-naranja/40 bg-naranja/20 text-blue",
   rojo: "border-rojo/30 bg-rojo/10 text-rojo",
   azul: "border-primario/30 bg-primario/10 text-primario",
   morado: "border-secundario/30 bg-secundario/10 text-secundario",

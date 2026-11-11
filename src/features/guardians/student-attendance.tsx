@@ -20,7 +20,7 @@ type Carga =
 const ESTADOS: Record<Status, { etiqueta: string; color: string }> = {
   present: { etiqueta: "Presente", color: "text-verde-fuerte" },
   absent: { etiqueta: "Ausente", color: "text-rojo" },
-  late: { etiqueta: "Tarde", color: "text-naranja-fuerte" },
+  late: { etiqueta: "Tarde", color: "text-blue" },
   justified: { etiqueta: "Justificado", color: "text-blue" },
 };
 

@@ -12,7 +12,7 @@ export default function CursosPage() {
         <Link href="/institucion" className="mb-2 block text-sm text-gray-600 hover:underline">
           ← Institución
         </Link>
-        <Encabezado titulo="Cursos" subtitulo="Listado de cursos de la institución." fondo="bg-accent/15 text-naranja-fuerte" icono={<path d="M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v14" />} />
+        <Encabezado titulo="Cursos" subtitulo="Listado de cursos de la institución." fondo="bg-accent/15 text-blue" icono={<path d="M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v14" />} />
       </div>
 
       <AdminDirectorOnly>{(institutionId) => <CursosAdmin institutionId={institutionId} />}</AdminDirectorOnly>

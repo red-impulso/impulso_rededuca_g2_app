@@ -5,7 +5,7 @@ import type { ButtonHTMLAttributes } from "react";
 const TONOS = {
   neutro: "text-gray-600 hover:bg-gray-100 hover:text-ink",
   azul: "text-primario hover:bg-primario/10",
-  naranja: "text-naranja-fuerte hover:bg-naranja/20",
+  naranja: "text-blue hover:bg-naranja/20",
   rojo: "text-rojo hover:bg-rojo/10",
 } as const;
 

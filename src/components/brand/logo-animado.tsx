@@ -26,10 +26,11 @@ export function LogoAnimado({
           </radialGradient>
         </defs>
         <g data-logo="orbitas" className="logo-orbitas">
-          <ellipse cx="256" cy="256" rx="206" ry="96" fill="none" stroke="#2b2f8f" strokeWidth="34" transform="rotate(-28 256 256)" />
-          <ellipse cx="256" cy="256" rx="196" ry="84" fill="none" stroke="#22c3e6" strokeWidth="30" transform="rotate(38 256 256)" />
-          <circle cx="148" cy="86" r="40" fill="#833dff" />
-          <circle cx="436" cy="226" r="36" fill="#f79a3e" />
+          <ellipse cx="256" cy="256" rx="224" ry="108" fill="none" stroke="#2b2f8f" strokeWidth="34" transform="rotate(-28 256 256)" />
+          <ellipse cx="256" cy="256" rx="212" ry="96" fill="none" stroke="#22c3e6" strokeWidth="30" transform="rotate(38 256 256)" />
+          {/* Los puntitos giran junto con las órbitas; el centro queda quieto. */}
+          <circle cx="140" cy="74" r="40" fill="#833dff" />
+          <circle cx="450" cy="224" r="36" fill="#ffbf43" />
         </g>
         <g data-logo="centro">
           <circle cx="256" cy="256" r="78" fill="#ffffff" />

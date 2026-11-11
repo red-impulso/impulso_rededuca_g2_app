@@ -61,7 +61,7 @@ export default function InicioPage() {
             </Link>
             <Link
               href="/comunicados"
-              className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-naranja bg-transparent px-6 py-2.5 text-sm font-semibold text-naranja-fuerte transition hover:bg-naranja/15"
+              className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-naranja bg-transparent px-6 py-2.5 text-sm font-semibold text-blue transition hover:bg-naranja/15"
             >
               Más información
             </Link>

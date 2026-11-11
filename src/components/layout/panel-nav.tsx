@@ -223,7 +223,7 @@ export function PanelNav({ children }: { children: ReactNode }) {
               />
             ))}
           </nav>
-          <span aria-hidden className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-accent/60" />
+          <span aria-hidden className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-celeste/60" />
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">{children}</div>

@@ -52,12 +52,21 @@ export default function Home() {
       <header className="sticky top-0 z-20 border-b border-lnd-border bg-lnd-bg/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
           <LogoAnimado size={44} conTexto />
-          <Link
-            href="/ingresar"
-            className="cta-landing rounded-xl px-5 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(255,144,40,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(255,144,40,0.4)]"
-          >
-            Postular
-          </Link>
+          <div className="flex items-center gap-3">
+            {/* Ingresar: botón secundario (borde primary, sin relleno) */}
+            <Link
+              href="/ingresar"
+              className="rounded-xl border border-lnd-primary bg-transparent px-5 py-2 text-sm font-semibold text-lnd-primary transition hover:bg-lnd-primary/5"
+            >
+              Ingresar
+            </Link>
+            <a
+              href="#postular"
+              className="cta-landing rounded-xl px-5 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(255,144,40,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(255,144,40,0.4)]"
+            >
+              Postular
+            </a>
+          </div>
         </div>
       </header>
 

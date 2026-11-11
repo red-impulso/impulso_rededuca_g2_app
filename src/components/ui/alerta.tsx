@@ -15,7 +15,7 @@ const ESTILOS = {
     ),
   },
   aviso: {
-    caja: "border-naranja/50 bg-naranja/15 text-naranja-fuerte",
+    caja: "border-naranja/50 bg-naranja/15 text-blue",
     icono: (
       <>
         <path d="M12 3 22.5 21h-21z" />
