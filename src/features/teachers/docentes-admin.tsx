@@ -46,7 +46,7 @@ function BotonNuevo({ redondo, onClick }: { redondo?: boolean; onClick: () => vo
     <button
       type="button"
       onClick={onClick}
-      className={redondo ? `inline-flex items-center gap-2 ${BOTON_NARANJA}` : `${BOTON_ACCION} shrink-0 bg-accent max-md:px-4 max-md:text-sm`}
+      className={redondo ? `inline-flex items-center gap-2 ${BOTON_NARANJA}` : `${BOTON_ACCION} shrink-0 bg-accent text-ink max-md:px-4 max-md:text-sm`}
     >
       <Icono className="h-5 w-5">
         <path d="M12 5v14M5 12h14" />
@@ -263,7 +263,7 @@ export function DocentesAdmin({ institutionId }: { institutionId: string }) {
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-rojo">
           {error}
         </p>
       )}
@@ -312,7 +312,7 @@ export function DocentesAdmin({ institutionId }: { institutionId: string }) {
             total={filtrados.length}
             pagina={paginaActual}
             nombre="docentes"
-            colorActual="bg-accent"
+            colorActual="bg-accent text-ink"
             onCambiar={setPagina}
           />
         </section>

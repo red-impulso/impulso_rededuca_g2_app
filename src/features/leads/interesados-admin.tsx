@@ -218,7 +218,7 @@ export function InteresadosAdmin({ institutionId }: { institutionId: string }) {
         titulo="Ocurrió un error"
         texto="No pudimos cargar las postulaciones. Intentá de nuevo."
         tono="naranja"
-        claseBoton={`${BOTON_ACCION} bg-blue`}
+        claseBoton={`${BOTON_ACCION} bg-blue text-white`}
         onReintentar={() => {
           setCarga({ status: "loading" });
           setIntento((actual) => actual + 1);
@@ -255,7 +255,7 @@ export function InteresadosAdmin({ institutionId }: { institutionId: string }) {
     <div className="flex flex-col gap-4">
       {aviso && <Aviso texto={aviso} onCerrar={() => setAviso(null)} />}
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-rojo">
           {error}
         </p>
       )}
@@ -271,7 +271,7 @@ export function InteresadosAdmin({ institutionId }: { institutionId: string }) {
               setFiltro(value);
               setPagina(0);
             }}
-            className="rounded-xl bg-blue/5 px-4 py-2 text-sm font-medium text-ink aria-selected:bg-accent aria-selected:text-white"
+            className="rounded-xl bg-blue/5 px-4 py-2 text-sm font-medium text-ink aria-selected:bg-accent aria-selected:text-ink"
           >
             {texto} ({cuantas(value)})
           </button>

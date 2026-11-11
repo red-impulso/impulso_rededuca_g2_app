@@ -11,7 +11,7 @@ function Contenido() {
 
   if (session.status === "error") {
     return (
-      <p role="alert" className="text-red-600">
+      <p role="alert" className="text-rojo">
         No se pudieron cargar tus datos. Probá de nuevo en un rato.
       </p>
     );

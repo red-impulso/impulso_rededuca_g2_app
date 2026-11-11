@@ -163,16 +163,16 @@ export function DocenteForm({
       )}
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-rojo">
           {error}
         </p>
       )}
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-        <button type="button" onClick={onCancelar} className="rounded-xl border border-gray-300 px-6 py-2.5 text-ink">
+        <button type="button" onClick={onCancelar} className="rounded-full border border-gray-300 px-6 py-2.5 text-ink">
           Cancelar
         </button>
-        <button type="submit" disabled={enviando} className={`${BOTON_ACCION} bg-accent`}>
+        <button type="submit" disabled={enviando} className={`${BOTON_ACCION} bg-accent text-ink`}>
           Guardar
         </button>
       </div>

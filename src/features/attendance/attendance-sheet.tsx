@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ApiError, apiFetch } from "../../lib/api";
+import { Toast } from "../../components/ui/alerta";
 
 type Status = "present" | "absent" | "late" | "justified";
 
@@ -23,9 +24,9 @@ type Guardado =
   | { status: "error"; message: string };
 
 const ESTADOS: { value: Status; letra: string; etiqueta: string; marcado: string }[] = [
-  { value: "present", letra: "P", etiqueta: "Presente", marcado: "bg-green text-white" },
-  { value: "absent", letra: "A", etiqueta: "Ausente", marcado: "bg-red-600 text-white" },
-  { value: "late", letra: "T", etiqueta: "Tarde", marcado: "bg-accent text-white" },
+  { value: "present", letra: "P", etiqueta: "Presente", marcado: "bg-green text-ink" },
+  { value: "absent", letra: "A", etiqueta: "Ausente", marcado: "bg-rojo text-white" },
+  { value: "late", letra: "T", etiqueta: "Tarde", marcado: "bg-accent text-ink" },
   { value: "justified", letra: "J", etiqueta: "Justificado", marcado: "bg-blue text-white" },
 ];
 
@@ -85,7 +86,7 @@ export function AttendanceSheet({
 
   if (carga.status === "error") {
     return (
-      <p role="alert" className="text-red-600">
+      <p role="alert" className="text-rojo">
         {carga.message}
       </p>
     );
@@ -143,22 +144,43 @@ export function AttendanceSheet({
     }
   }
 
+  const marcados = rows.length - faltan;
+  const presentes = rows.filter((row) => marcas[row.student.id] === "present").length;
+  const porcentaje = marcados === 0 ? 0 : Math.round((presentes / marcados) * 100);
+
   return (
     <div className="flex flex-col gap-4">
-      <button type="button" onClick={todosPresentes} className="self-start rounded border px-4 py-2">
-        Todos presentes
-      </button>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={todosPresentes}
+          className="rounded-full border border-primario px-4 py-2 text-sm font-semibold text-primario transition hover:bg-primario/10"
+        >
+          Todos presentes
+        </button>
 
-      <ul className="flex flex-col">
+        {/* Resumen del día con barra de progreso (prototipo de asistencia) */}
+        <div className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white/80 px-4 py-2 text-sm shadow-[0_8px_30px_rgba(20,24,90,0.06)]">
+          <span className="text-gray-600">
+            Asistencia: <strong className="text-ink">{porcentaje}%</strong>
+          </span>
+          <span aria-hidden className="h-2 w-24 overflow-hidden rounded-full bg-green/15">
+            <span className="block h-full rounded-full bg-green" style={{ width: `${porcentaje}%` }} />
+          </span>
+        </div>
+      </div>
+
+      <ul className="flex flex-col divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white px-4 shadow-[0_8px_30px_rgba(20,24,90,0.06)]">
         {rows.map((row) => (
-          <li key={row.student.id} className="border-b py-2">
+          <li key={row.student.id} className="py-2.5">
             <div
               role="group"
               aria-label={nombreDe(row)}
               className="flex flex-wrap items-center justify-between gap-2"
             >
-              <span>{nombreDe(row)}</span>
-              <span className="flex gap-1">
+              <span className="font-medium">{nombreDe(row)}</span>
+              {/* Letra + color: el estado nunca depende solo del color */}
+              <span className="flex gap-1.5">
                 {ESTADOS.map((estado) => {
                   const activo = marcas[row.student.id] === estado.value;
                   return (
@@ -166,9 +188,12 @@ export function AttendanceSheet({
                       key={estado.value}
                       type="button"
                       aria-label={estado.etiqueta}
+                      title={estado.etiqueta}
                       aria-pressed={activo}
                       onClick={() => marcar(row.student.id, estado.value)}
-                      className={`h-11 w-11 rounded border font-semibold ${activo ? estado.marcado : ""}`}
+                      className={`flex h-11 w-11 items-center justify-center rounded-xl border font-semibold transition ${
+                        activo ? `${estado.marcado} border-transparent` : "border-gray-300 bg-white text-gray-500 hover:border-gray-400"
+                      }`}
                     >
                       {estado.letra}
                     </button>
@@ -186,26 +211,29 @@ export function AttendanceSheet({
         </p>
       )}
 
-      <div className="flex items-center gap-3">
+      {guardado.status === "error" && (
+        <p role="alert" className="text-sm text-rojo">
+          {guardado.message}
+        </p>
+      )}
+
+      {/* En celular queda fijo abajo, encima del menú inferior */}
+      <div className="sticky bottom-20 md:bottom-4">
         <button
           type="button"
           onClick={guardar}
           disabled={!puedeGuardar}
-          className="rounded bg-accent px-4 py-2 font-medium text-white disabled:opacity-50"
+          className="w-full rounded-full bg-accent px-6 py-3 font-semibold text-ink shadow-[0_8px_20px_rgba(255,191,67,0.4)] transition hover:brightness-95 disabled:opacity-50 md:w-auto"
         >
-          {guardando ? "Guardando..." : "Guardar"}
+          {guardando ? "Guardando..." : "Guardar asistencia"}
         </button>
-        {guardado.status === "saved" && (
-          <p role="status" className="text-green">
-            Guardado
-          </p>
-        )}
-        {guardado.status === "error" && (
-          <p role="alert" className="text-red-600">
-            {guardado.message}
-          </p>
-        )}
       </div>
+
+      {guardado.status === "saved" && (
+        <Toast tipo="exito" onCerrar={() => setGuardado({ status: "idle" })}>
+          ¡Listo! La asistencia se guardó.
+        </Toast>
+      )}
     </div>
   );
 }

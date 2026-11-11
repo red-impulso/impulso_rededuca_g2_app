@@ -1,15 +1,52 @@
 @import "tailwindcss";
 
-/* Marca RedEduca (B-03). Paleta del resumen ejecutivo.
-   --color-surface es el celeste de los prototipos de UX/UI.
-   "static" deja siempre las variables en :root (aunque ninguna clase las use)
-   y además crea clases de Tailwind: bg-surface, text-ink, bg-accent, etc. */
+/* Marca RedEduca (lámina "Marca RedEduca: ícono, colores y tipografía").
+   Paleta oficial del informe de diseño:
+   azul apoyo/acentos, morado elementos/éxito, celeste enlaces/botones,
+   naranja fondos/espacios, verde textos/íconos, acento fondos suaves.
+   Nota: la lámina escribe el celeste como "#2ED466" (un verde); es un
+   error de tipeo y acá se usa #2ED4E6.
+
+   Las claves "ink", "accent" y "surface" quedaron como alias de los tokens
+   oficiales porque todo el código ya las usa (bg-accent, text-ink, ...).
+   brand.test.ts comprueba que coincidan con BRAND_COLORS. */
 @theme static {
-  --color-ink: #14213d;
-  --color-accent: #f46a3c;
-  --color-surface: #f0f6ff;
-  --color-blue: #2563eb;
-  --color-green: #0f8a81;
+  /* Tokens oficiales */
+  --color-primario: #2f4edc;
+  --color-secundario: #833dff;
+  --color-celeste: #2ed4e6;
+  --color-naranja: #ffbf43;
+  --color-verde: #4caf50;
+  --color-acento-suave: #9ed4ee;
+  --color-texto: #14185a;
+  --color-blanco: #ffffff;
+  --color-rojo: #d64545;
+
+  /* Misma familia de color pero más oscuras: texto y bordes con AA. */
+  --color-celeste-fuerte: #0e7f93;
+  --color-naranja-fuerte: #8a5d00;
+  --color-verde-fuerte: #2e7d32;
+
+  /* Alias heredados (los componentes ya escritos los usan). */
+  --color-ink: #14185a;
+  --color-blue: #2f4edc;
+  --color-purple: #833dff;
+  --color-green: #4caf50;
+  --color-accent: #ffbf43;
+  --color-surface: #eef3fe;
+
+  /* Paleta de la landing pública (brief aparte del informe). */
+  --color-lnd-bg: #f6faf9;
+  --color-lnd-bg-alt: #f8f8f8;
+  --color-lnd-bg-soft: #e8f0b8;
+  --color-lnd-border: #d8d8d8;
+  --color-lnd-primary: #0a3d62;
+  --color-lnd-secondary: #0d5e6a;
+  --color-lnd-text: #1c292d;
+  --color-lnd-muted: #526166;
+  --color-lnd-accent: #ff9028;
+  --color-lnd-accent-dark: #f87818;
+  --color-lnd-purple: #953dd1;
 }
 
 @theme inline {
@@ -35,8 +72,17 @@
   }
 }
 
+/* CTA de la landing: degradé naranja del brief. */
+.cta-landing {
+  background: linear-gradient(
+    135deg,
+    var(--color-lnd-accent),
+    var(--color-lnd-accent-dark)
+  );
+}
+
 body {
   background: var(--color-surface);
-  color: var(--color-ink);
+  color: var(--color-texto);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }

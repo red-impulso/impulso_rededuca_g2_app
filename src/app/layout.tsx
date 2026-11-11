@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { BRAND_COLORS } from "../config/brand";
 import { DomPatch } from "../components/dom-patch";
-import { SiteFooter } from "../components/layout/site-footer";
 
 // Letra de la marca (B-03).
 const inter = Inter({
@@ -33,7 +32,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <DomPatch />
         {children}
-        <SiteFooter />
       </body>
     </html>
   );

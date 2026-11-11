@@ -3,10 +3,12 @@ import { Cargando, Estado, Icono } from "./estado";
 
 // Estados de pantalla completa de UX/UI: alumnos, docentes, usuarios y escuelas.
 
-export const BOTON_NARANJA = "rounded-full bg-accent px-8 py-2.5 font-medium text-white";
+export const BOTON_NARANJA = "rounded-full bg-accent px-8 py-2.5 font-medium text-ink";
 
+// Sin color de texto: cada llamada lo pone junto al fondo (blanco sobre
+// azul/morado, texto oscuro sobre naranja/verde — así cumple WCAG AA).
 export const BOTON_ACCION =
-  "inline-flex items-center justify-center gap-2 rounded-xl px-6 py-2.5 font-medium text-white disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 font-medium disabled:opacity-50";
 
 // Tarjeta de los estados, con los cuartos de círculo de las esquinas.
 export function Marco({ arriba, abajo, children }: { arriba: string; abajo: string; children: ReactNode }) {
@@ -90,8 +92,8 @@ export function PantallaError({
       <Marco arriba="bg-blue/20" abajo="bg-accent/30">
         <Estado
           ilustracion={
-            <Circulo fondo={tono === "rojo" ? "bg-red-50" : "bg-accent/15"}>
-              <Icono className={`h-14 w-14 ${tono === "rojo" ? "text-red-600" : "text-accent"}`}>
+            <Circulo fondo={tono === "rojo" ? "bg-rojo/10" : "bg-accent/15"}>
+              <Icono className={`h-14 w-14 ${tono === "rojo" ? "text-rojo" : "text-naranja-fuerte"}`}>
                 <path d="M12 3 22.5 21h-21zM12 10v5M12 18v.5" />
               </Icono>
             </Circulo>
@@ -122,7 +124,7 @@ export function PantallaGuardada({
       <Estado
         ilustracion={
           <Circulo fondo="bg-green/10">
-            <Icono className="h-16 w-16 text-green">
+            <Icono className="h-16 w-16 text-verde-fuerte">
               <circle cx="12" cy="12" r="9.5" />
               <path d="m8 12.5 2.5 2.5 5.5-5.5" />
             </Icono>
@@ -142,9 +144,9 @@ export function Aviso({ texto, onCerrar }: { texto: string; onCerrar: () => void
   return (
     <div
       role="status"
-      className="flex items-center gap-3 rounded-xl border border-green/20 bg-green/10 px-4 py-3 text-sm font-medium text-green"
+      className="flex items-center gap-3 rounded-xl border border-green/20 bg-green/10 px-4 py-3 text-sm font-medium text-verde-fuerte"
     >
-      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green text-white">
+      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green text-ink">
         <Icono className="h-4 w-4">
           <path d="m6 12.5 4 4 8-8.5" />
         </Icono>

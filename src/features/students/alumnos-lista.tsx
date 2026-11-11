@@ -247,7 +247,7 @@ export function AlumnosLista({ institutionId }: { institutionId: string }) {
         <button
           type="button"
           onClick={() => setAlta(true)}
-          className="flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 font-medium text-white"
+          className="flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-medium text-ink"
         >
           <Icono className="h-5 w-5">
             <path d="M12 5v14M5 12h14" />

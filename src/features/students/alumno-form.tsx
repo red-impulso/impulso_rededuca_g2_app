@@ -163,7 +163,7 @@ export function AlumnoForm({
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-rojo">
           {error}
         </p>
       )}
@@ -172,7 +172,7 @@ export function AlumnoForm({
         <button
           type="submit"
           disabled={enviando}
-          className="rounded-xl bg-accent px-4 py-2 font-medium text-white disabled:opacity-50"
+          className="rounded-full bg-accent px-5 py-2 font-medium text-ink disabled:opacity-50"
         >
           {enviando ? "Guardando..." : "Guardar"}
         </button>

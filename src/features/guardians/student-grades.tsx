@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ApiError, apiFetch } from "../../lib/api";
+import { TARJETA } from "../institution/admin-ui";
 
 // Lo que devuelve GET /students/:studentId/grades (ver README de la API).
 interface StudentGrade {
@@ -59,7 +60,7 @@ export function StudentGrades({
 
   if (carga.status === "error") {
     return (
-      <p role="alert" className="text-red-600">
+      <p role="alert" className="text-rojo">
         {carga.message}
       </p>
     );
@@ -70,15 +71,19 @@ export function StudentGrades({
   return (
     <div className="flex flex-col gap-4">
       {agruparPorMateria(carga.grades).map(([id, materia]) => (
-        <section key={id} aria-labelledby={`materia-${id}`} className="rounded border bg-white px-4 py-3">
-          <h2 id={`materia-${id}`} className="mb-2 font-semibold">
+        <section
+          key={id}
+          aria-labelledby={`materia-${id}`}
+          className={`${TARJETA} px-4 py-3`}
+        >
+          <h2 id={`materia-${id}`} className="mb-2 font-semibold text-ink">
             {materia.name}
           </h2>
           <dl className="flex flex-col gap-1">
             {materia.grades.map((grade) => (
               <div key={grade.period.id} className="flex items-center justify-between">
                 <dt className="text-gray-600">{grade.period.name}</dt>
-                <dd className="font-semibold">{String(grade.value).replace(".", ",")}</dd>
+                <dd className="font-semibold text-ink">{String(grade.value).replace(".", ",")}</dd>
               </div>
             ))}
           </dl>

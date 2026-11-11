@@ -25,8 +25,8 @@ const JSON_HEADERS = { "Content-Type": "application/json" };
 
 const COLOR_PARENTESCO: Record<string, string> = {
   madre: "bg-blue/10 text-blue",
-  padre: "bg-violet-100 text-violet-700",
-  tutor: "bg-green/15 text-green",
+  padre: "bg-secundario/10 text-secundario",
+  tutor: "bg-green/15 text-verde-fuerte",
   otro: "bg-gray-200 text-gray-700",
 };
 
@@ -90,7 +90,7 @@ function CamposContacto({
 
 function BotonCancelar({ onClick }: { onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} className="rounded-xl border border-gray-300 px-6 py-2.5 text-ink">
+    <button type="button" onClick={onClick} className="rounded-full border border-gray-300 px-6 py-2.5 text-ink">
       Cancelar
     </button>
   );
@@ -130,7 +130,7 @@ function EditarTutor({
       />
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <BotonCancelar onClick={onCancelar} />
-        <button type="submit" disabled={enviando} className={`${BOTON_ACCION} bg-accent`}>
+        <button type="submit" disabled={enviando} className={`${BOTON_ACCION} bg-accent text-ink`}>
           Guardar
         </button>
       </div>
@@ -192,7 +192,7 @@ function AgregarTutor({
       />
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <BotonCancelar onClick={onCancelar} />
-        <button type="submit" disabled={!elegido || enviando} className={`${BOTON_ACCION} bg-accent`}>
+        <button type="submit" disabled={!elegido || enviando} className={`${BOTON_ACCION} bg-accent text-ink`}>
           Vincular
         </button>
       </div>
@@ -450,7 +450,7 @@ export function StudentGuardians({ institutionId, studentId }: { institutionId: 
       )}
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-rojo">
           {error}
         </p>
       )}

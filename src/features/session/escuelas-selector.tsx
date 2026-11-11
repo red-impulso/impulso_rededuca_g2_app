@@ -24,7 +24,7 @@ export function EscuelasSelector() {
         titulo="No se pudieron cargar las escuelas"
         texto="Revisá la conexión a Internet e intentá de nuevo."
         tono="naranja"
-        claseBoton={`${BOTON_ACCION} bg-blue`}
+        claseBoton={`${BOTON_ACCION} bg-blue text-white`}
         onReintentar={session.reintentar}
       />
     );
@@ -37,7 +37,7 @@ export function EscuelasSelector() {
         texto="Contactate con el administrador del sistema."
         icono={ICONO_ESCUELA}
       >
-        <button type="button" onClick={session.reintentar} className={`${BOTON_ACCION} bg-accent`}>
+        <button type="button" onClick={session.reintentar} className={`${BOTON_ACCION} bg-accent text-ink`}>
           <IconoReintentar />
           Reintentar
         </button>

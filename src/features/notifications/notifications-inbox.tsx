@@ -31,7 +31,7 @@ const TIPOS: Record<Tipo, { destino: string; texto: string; color: string; icono
   grade: {
     destino: "/hijos",
     texto: "Tu hijo/a tiene una nueva nota.",
-    color: "bg-[#833dff]",
+    color: "bg-purple text-white",
     icono: (
       <>
         <circle cx="12" cy="9" r="5" />
@@ -42,7 +42,7 @@ const TIPOS: Record<Tipo, { destino: string; texto: string; color: string; icono
   attendance: {
     destino: "/hijos",
     texto: "Se registró la asistencia de tu hijo/a.",
-    color: "bg-green",
+    color: "bg-green text-ink",
     icono: (
       <>
         <rect x="5" y="4" width="14" height="17" rx="2" />
@@ -53,7 +53,7 @@ const TIPOS: Record<Tipo, { destino: string; texto: string; color: string; icono
   announcement: {
     destino: "/comunicados",
     texto: "Comunicación de la institución.",
-    color: "bg-accent",
+    color: "bg-accent text-ink",
     icono: (
       <>
         <path d="M4 10v4h3l9 4V6l-9 4z" />
@@ -152,7 +152,7 @@ export function NotificationsInbox({ institutionId }: { institutionId: string })
     <button
       type="button"
       onClick={() => router.push("/inicio")}
-      className={`mt-1 rounded-full px-10 py-2 font-medium text-white ${color}`}
+      className={`mt-1 rounded-full px-10 py-2 font-medium ${color}`}
     >
       Volver
     </button>
@@ -168,9 +168,9 @@ export function NotificationsInbox({ institutionId }: { institutionId: string })
     return (
       <div role="alert">
         <Estado
-          fondo="bg-red-50"
+          fondo="bg-rojo/10"
           ilustracion={
-            <Icono className="h-14 w-14 text-red-600">
+            <Icono className="h-14 w-14 text-rojo">
               <path d="M12 3 22.5 21h-21zM12 10v5M12 18v.5" />
             </Icono>
           }
@@ -180,7 +180,7 @@ export function NotificationsInbox({ institutionId }: { institutionId: string })
           <button
             type="button"
             onClick={reintentar}
-            className="mt-1 rounded-full bg-red-600 px-8 py-2 font-medium text-white"
+            className="mt-1 rounded-full bg-rojo px-8 py-2 font-medium text-white"
           >
             Reintentar
           </button>
@@ -194,7 +194,7 @@ export function NotificationsInbox({ institutionId }: { institutionId: string })
       <Estado
         fondo="bg-green/10"
         ilustracion={
-          <Icono className="h-14 w-14 text-green">
+          <Icono className="h-14 w-14 text-verde-fuerte">
             <circle cx="12" cy="12" r="9.5" />
             <path d="m8 12.5 2.5 2.5 5.5-5.5" />
           </Icono>
@@ -202,7 +202,7 @@ export function NotificationsInbox({ institutionId }: { institutionId: string })
         titulo="¡Todo al día!"
         texto="No hay notificaciones nuevas en este momento."
       >
-        {botonVolver("bg-green")}
+        {botonVolver("bg-green text-ink")}
       </Estado>
     );
   }
@@ -220,7 +220,7 @@ export function NotificationsInbox({ institutionId }: { institutionId: string })
         titulo="No tenés notificaciones"
         texto="Cuando recibas novedades, las vas a ver acá."
       >
-        {botonVolver("bg-blue")}
+        {botonVolver("bg-blue text-white")}
       </Estado>
     );
   }
@@ -271,7 +271,7 @@ export function NotificationsInbox({ institutionId }: { institutionId: string })
       </button>
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-rojo">
           {error}
         </p>
       )}
@@ -307,7 +307,7 @@ export function NotificationsInbox({ institutionId }: { institutionId: string })
                   className="flex w-full items-center gap-3 px-3 py-3 text-left hover:bg-blue/5"
                 >
                   <span
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white ${tipo.color}`}
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${tipo.color}`}
                   >
                     <Icono className="h-6 w-6">{tipo.icono}</Icono>
                   </span>

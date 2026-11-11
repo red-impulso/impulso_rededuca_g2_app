@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ApiError, apiFetch } from "../../lib/api";
+import { TARJETA } from "../institution/admin-ui";
 
 type Status = "present" | "absent" | "late" | "justified";
 
@@ -17,9 +18,9 @@ type Carga =
   | { status: "ready"; data: StudentAttendanceResponse };
 
 const ESTADOS: Record<Status, { etiqueta: string; color: string }> = {
-  present: { etiqueta: "Presente", color: "text-green" },
-  absent: { etiqueta: "Ausente", color: "text-red-600" },
-  late: { etiqueta: "Tarde", color: "text-accent" },
+  present: { etiqueta: "Presente", color: "text-verde-fuerte" },
+  absent: { etiqueta: "Ausente", color: "text-rojo" },
+  late: { etiqueta: "Tarde", color: "text-naranja-fuerte" },
   justified: { etiqueta: "Justificado", color: "text-blue" },
 };
 
@@ -70,7 +71,7 @@ export function StudentAttendance({
 
   if (carga.status === "error") {
     return (
-      <p role="alert" className="text-red-600">
+      <p role="alert" className="text-rojo">
         {carga.message}
       </p>
     );
@@ -80,15 +81,18 @@ export function StudentAttendance({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded border bg-white px-4 py-6 text-center">
-        <h2 className="text-4xl font-semibold">{titulo(data)}</h2>
+      <div className={`${TARJETA} px-4 py-6 text-center`}>
+        <h2 className="text-4xl font-semibold text-ink">{titulo(data)}</h2>
         <p className="mt-1 text-sm text-gray-600">Asistencia</p>
       </div>
 
       {data.records.length > 0 && (
-        <ul className="flex flex-col rounded border bg-white px-4">
+        <ul className={`${TARJETA} flex flex-col px-4`}>
           {data.records.map((record) => (
-            <li key={record.date} className="flex items-center justify-between border-b py-2 last:border-b-0">
+            <li
+              key={record.date}
+              className="flex items-center justify-between border-b border-ink/10 py-2 last:border-b-0"
+            >
               <span>{mostrarFecha(record.date)}</span>
               <span className={`font-medium ${ESTADOS[record.status].color}`}>
                 {ESTADOS[record.status].etiqueta}

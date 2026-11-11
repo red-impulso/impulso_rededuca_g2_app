@@ -46,7 +46,7 @@ describe('GradesSheet', () => {
       await userEvent.type(casillero, valor);
 
       expect(casillero.getAttribute('aria-invalid')).toBe('true');
-      expect(casillero.className).toContain('border-red');
+      expect(casillero.className).toContain('border-rojo');
       expect(botonGuardar()).toHaveProperty('disabled', true);
     }
   );
@@ -99,7 +99,7 @@ describe('GradesSheet', () => {
 
     terminar({ saved: 1 });
 
-    expect((await screen.findByRole('status')).textContent).toBe('Guardado');
+    expect((await screen.findByRole('status')).textContent).toBe('¡Listo! Las notas se guardaron.');
     expect(botonGuardar()).toHaveProperty('disabled', true);
   });
 

@@ -79,7 +79,7 @@ export function ChildCard({ child, institutionId }: { child: Child; institutionI
     >
       <span
         aria-hidden
-        className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-accent via-[#833dff] to-[#22c3e6]"
+        className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-accent via-purple to-celeste"
       />
 
       <div className="flex items-center gap-3">

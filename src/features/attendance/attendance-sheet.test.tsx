@@ -27,7 +27,7 @@ async function abrirLista(filas: unknown[] = lista) {
 const alumno = (nombre: string) => within(screen.getByRole('group', { name: nombre }));
 const estado = (nombre: string, etiqueta: string) => alumno(nombre).getByRole('button', { name: etiqueta });
 const marcado = (boton: HTMLElement) => boton.getAttribute('aria-pressed');
-const botonGuardar = () => screen.getByRole('button', { name: 'Guardar' });
+const botonGuardar = () => screen.getByRole('button', { name: 'Guardar asistencia' });
 
 describe('AttendanceSheet', () => {
   beforeEach(() => mockApi.mockReset());
@@ -109,7 +109,7 @@ describe('AttendanceSheet', () => {
 
     terminar({ saved: 2 });
 
-    expect((await screen.findByRole('status')).textContent).toBe('Guardado');
+    expect((await screen.findByRole('status')).textContent).toBe('¡Listo! La asistencia se guardó.');
     expect(botonGuardar()).toHaveProperty('disabled', true);
   });
 

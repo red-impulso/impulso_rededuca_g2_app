@@ -39,7 +39,7 @@ export function LogoAnimado({
       {conTexto && (
         <span className="flex flex-col leading-tight">
           <span className="text-lg font-bold text-ink">RedEduca</span>
-          <span className="text-xs font-medium text-[#833dff]">Plataforma Integral</span>
+          <span className="text-xs font-medium text-purple">Plataforma Integral</span>
         </span>
       )}
     </span>

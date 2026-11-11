@@ -19,9 +19,9 @@ export const ETIQUETA_ROL: Record<Role, string> = {
 };
 
 export const COLOR_ROL: Record<Role, string> = {
-  admin: "bg-accent/15 text-accent",
-  director: "bg-green/15 text-green",
-  teacher: "bg-violet-100 text-violet-700",
+  admin: "bg-accent/15 text-naranja-fuerte",
+  director: "bg-green/15 text-verde-fuerte",
+  teacher: "bg-secundario/10 text-secundario",
   guardian: "bg-blue/10 text-blue",
   student: "bg-gray-200 text-gray-700",
 };

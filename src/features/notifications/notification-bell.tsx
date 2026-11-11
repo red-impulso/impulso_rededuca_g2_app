@@ -52,8 +52,8 @@ export function NotificationBell({ institutionId }: { institutionId: string }) {
         <path d="M10 20a2.2 2.2 0 0 0 4 0" />
       </svg>
       <span
-        className={`absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-semibold text-white ${
-          sinLeer > 0 ? "bg-red-600" : "bg-blue"
+        className={`absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-semibold ${
+          sinLeer > 0 ? "bg-secundario text-white" : "bg-gray-300 text-ink"
         }`}
       >
         {sinLeer > 99 ? "99+" : sinLeer}

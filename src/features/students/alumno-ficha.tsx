@@ -139,7 +139,7 @@ function DatosPersonales({ alumno }: { alumno: StudentFile }) {
       </Seccion>
 
       {alumno.updatedAt && (
-        <div className="flex items-center gap-3 rounded-xl border border-accent/20 bg-accent/10 px-4 py-2.5 text-accent">
+        <div className="flex items-center gap-3 rounded-xl border border-accent/20 bg-accent/10 px-4 py-2.5 text-naranja-fuerte">
           <Icono className="h-6 w-6 shrink-0">
             <circle cx="12" cy="12" r="9.5" />
             <path d="M12 11v5M12 8v.5" />
@@ -356,7 +356,7 @@ export function AlumnoFicha({ institutionId, studentId }: { institutionId: strin
               aria-label={nombre}
               aria-selected={pestana === nombre}
               onClick={() => setPestana(nombre)}
-              className="flex-auto rounded-xl bg-blue/5 px-1 py-2.5 text-xs font-medium text-ink aria-selected:bg-accent aria-selected:text-white sm:px-3 sm:text-sm"
+              className="flex-auto rounded-xl bg-blue/5 px-1 py-2.5 text-xs font-medium text-ink aria-selected:bg-accent aria-selected:text-ink sm:px-3 sm:text-sm"
             >
               <span className="sm:hidden">{NOMBRE_CORTO[nombre] ?? nombre}</span>
               <span className="hidden sm:inline">{nombre}</span>

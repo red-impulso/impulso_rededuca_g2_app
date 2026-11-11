@@ -90,7 +90,7 @@ function Numero({
       aria-label={titulo}
       className="flex flex-col gap-2 rounded-2xl border border-white/80 bg-white/80 p-4 shadow-[0_8px_30px_rgba(20,33,61,0.08)] backdrop-blur sm:flex-row sm:items-center sm:gap-3"
     >
-      <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white ${color}`}>
+      <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${color}`}>
         <Icono className="h-6 w-6">{icono}</Icono>
       </span>
       <span className="min-w-0">
@@ -183,16 +183,16 @@ export function Dashboard({ institutionId }: { institutionId: string }) {
     return (
       <div role="alert">
         <Estado
-          fondo="bg-red-50"
+          fondo="bg-rojo/10"
           ilustracion={
-            <Icono className="h-14 w-14 text-red-600">
+            <Icono className="h-14 w-14 text-rojo">
               <path d="M12 3 22.5 21h-21zM12 10v5M12 18v.5" />
             </Icono>
           }
           titulo="Error al cargar la información"
           texto="Ocurrió un problema al obtener los datos. Intentá nuevamente."
         >
-          {botonReintentar("bg-red-600")}
+          {botonReintentar("bg-rojo")}
         </Estado>
       </div>
     );
@@ -224,7 +224,7 @@ export function Dashboard({ institutionId }: { institutionId: string }) {
       <Estado
         fondo="bg-green/10"
         ilustracion={
-          <Icono className="h-14 w-14 text-green">
+          <Icono className="h-14 w-14 text-verde-fuerte">
             <circle cx="12" cy="12" r="9.5" />
             <path d="m8 12.5 2.5 2.5 5.5-5.5" />
           </Icono>
@@ -235,7 +235,7 @@ export function Dashboard({ institutionId }: { institutionId: string }) {
         <button
           type="button"
           onClick={() => setConfirmar(false)}
-          className="mt-1 rounded-full bg-green px-8 py-2 font-medium text-white"
+          className="mt-1 rounded-full bg-green px-8 py-2 font-medium text-ink"
         >
           Ver tablero
         </button>
@@ -257,7 +257,7 @@ export function Dashboard({ institutionId }: { institutionId: string }) {
         <Numero
           titulo="Total de estudiantes"
           valor={String(data.students)}
-          color="bg-blue"
+          color="bg-blue text-white"
           icono={
             <>
               <circle cx="9" cy="8" r="3.5" />
@@ -268,13 +268,13 @@ export function Dashboard({ institutionId }: { institutionId: string }) {
         <Numero
           titulo="Cursos activos"
           valor={String(data.courses)}
-          color="bg-[#833dff]"
+          color="bg-purple text-white"
           icono={<path d="M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v14" />}
         />
         <Numero
           titulo="Docentes"
           valor={String(data.teachers)}
-          color="bg-green"
+          color="bg-green text-ink"
           icono={
             <>
               <circle cx="12" cy="8" r="4" />
@@ -285,7 +285,7 @@ export function Dashboard({ institutionId }: { institutionId: string }) {
         <Numero
           titulo="Asistencia promedio"
           valor={data.attendanceAverage === null ? "—" : `${conComa(data.attendanceAverage)} %`}
-          color="bg-accent"
+          color="bg-accent text-ink"
           icono={
             <>
               <rect x="4" y="5" width="16" height="15" rx="2" />

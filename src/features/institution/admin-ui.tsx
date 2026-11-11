@@ -8,7 +8,8 @@ export const POR_PAGINA = 10;
 export const TARJETA =
   "rounded-2xl border border-white/80 bg-white/80 shadow-[0_8px_30px_rgba(20,33,61,0.08)] backdrop-blur";
 
-export const CAMPO = "rounded-lg border border-gray-300 bg-white px-3 py-2";
+export const CAMPO =
+  "rounded-xl border border-gray-300 bg-white px-3 py-2 transition focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/25";
 
 export function EstadoCargando({ titulo }: { titulo: string }) {
   return <Estado ilustracion={<Cargando />} titulo={titulo} texto="Por favor, esperá un momento." />;
@@ -18,9 +19,9 @@ export function EstadoError({ titulo, onReintentar }: { titulo: string; onReinte
   return (
     <div role="alert">
       <Estado
-        fondo="bg-red-50"
+        fondo="bg-rojo/10"
         ilustracion={
-          <Icono className="h-14 w-14 text-red-600">
+          <Icono className="h-14 w-14 text-rojo">
             <path d="M12 3 22.5 21h-21zM12 10v5M12 18v.5" />
           </Icono>
         }
@@ -30,7 +31,7 @@ export function EstadoError({ titulo, onReintentar }: { titulo: string; onReinte
         <button
           type="button"
           onClick={onReintentar}
-          className="mt-1 rounded-full bg-red-600 px-8 py-2 font-medium text-white"
+          className="mt-1 rounded-full bg-rojo px-8 py-2 font-medium text-white"
         >
           Reintentar
         </button>
@@ -74,7 +75,7 @@ export function EstadoActualizado({
     <Estado
       fondo="bg-green/10"
       ilustracion={
-        <Icono className="h-14 w-14 text-green">
+        <Icono className="h-14 w-14 text-verde-fuerte">
           <circle cx="12" cy="12" r="9.5" />
           <path d="m8 12.5 2.5 2.5 5.5-5.5" />
         </Icono>
@@ -82,7 +83,7 @@ export function EstadoActualizado({
       titulo={titulo}
       texto="La información se guardó correctamente."
     >
-      <button type="button" onClick={onClick} className="mt-1 rounded-full bg-green px-8 py-2 font-medium text-white">
+      <button type="button" onClick={onClick} className="mt-1 rounded-full bg-green px-8 py-2 font-medium text-ink">
         {boton}
       </button>
     </Estado>
@@ -161,7 +162,7 @@ export function Paginacion({
   nombre,
   numerada,
   separador = "-",
-  colorActual = "bg-blue",
+  colorActual = "bg-blue text-white",
   onCambiar,
 }: {
   total: number;
@@ -200,13 +201,13 @@ export function Paginacion({
               aria-label={`Página ${numero + 1}`}
               aria-current={numero === pagina ? "page" : undefined}
               onClick={() => onCambiar(numero)}
-              className={`h-9 w-9 rounded-lg ${numero === pagina ? `${colorActual} text-white` : "border border-gray-200 bg-white"}`}
+              className={`h-9 w-9 rounded-lg ${numero === pagina ? `${colorActual}` : "border border-gray-200 bg-white"}`}
             >
               {numero + 1}
             </button>
           ))
         ) : (
-          <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${colorActual} text-white`}>
+          <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${colorActual}`}>
             {pagina + 1}
           </span>
         )}
@@ -280,7 +281,7 @@ export function MenuAcciones({
             </button>
           )}
           {onEliminar && (
-            <button type="button" onClick={onEliminar} className="px-4 py-2 text-left text-red-700 hover:bg-red-50">
+            <button type="button" onClick={onEliminar} className="px-4 py-2 text-left text-rojo hover:bg-rojo/10">
               {confirmando ? "¿Seguro? Tocá de nuevo" : textoEliminar}
             </button>
           )}
@@ -294,7 +295,7 @@ export function Insignia({ activa, children }: { activa: boolean; children: Reac
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-        activa ? "bg-green/15 text-green" : "bg-gray-200 text-gray-700"
+        activa ? "bg-green/15 text-verde-fuerte" : "bg-gray-200 text-gray-700"
       }`}
     >
       <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${activa ? "bg-green" : "bg-gray-500"}`} />

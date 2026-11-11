@@ -9,7 +9,7 @@ export default function NotFound() {
       <p className="text-gray-600">
         Esta sección no existe o todavía está en construcción.
       </p>
-      <Link href="/inicio" className="rounded bg-accent px-4 py-2 font-medium text-white">
+      <Link href="/inicio" className="rounded-full bg-accent px-5 py-2 font-medium text-ink">
         Volver al inicio
       </Link>
     </main>

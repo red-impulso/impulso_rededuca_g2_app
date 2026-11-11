@@ -22,7 +22,7 @@ const onPublicado = vi.fn();
 async function abrir(role: 'admin' | 'director' | 'teacher') {
   mockApi.mockResolvedValueOnce(cursos);
   render(<AnnouncementForm institutionId="esc-1" role={role} onPublicado={onPublicado} />);
-  await userEvent.click(screen.getByRole('button', { name: 'Nuevo comunicado' }));
+  await userEvent.click(screen.getByRole('button', { name: '+ Nuevo comunicado' }));
   await screen.findByLabelText('Alcance');
 }
 

@@ -29,10 +29,10 @@ export const SIN_CARGAR = "Sin cargar";
 
 const COLORES = [
   { chip: "bg-blue/10 text-blue", solido: "bg-blue" },
-  { chip: "bg-violet-100 text-violet-700", solido: "bg-violet-500" },
-  { chip: "bg-green/15 text-green", solido: "bg-green" },
-  { chip: "bg-accent/15 text-accent", solido: "bg-accent" },
-  { chip: "bg-rose-100 text-rose-700", solido: "bg-rose-500" },
+  { chip: "bg-secundario/10 text-secundario", solido: "bg-secundario" },
+  { chip: "bg-green/15 text-verde-fuerte", solido: "bg-green" },
+  { chip: "bg-accent/15 text-naranja-fuerte", solido: "bg-accent" },
+  { chip: "bg-celeste/20 text-celeste-fuerte", solido: "bg-celeste" },
 ];
 
 // Una misma materia siempre sale del mismo color, en la lista y en la ficha.

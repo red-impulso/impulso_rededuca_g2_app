@@ -76,9 +76,9 @@ function TarjetaMateria({
         aria-label={seguro ? `¿Seguro? Quitar ${materia.name}` : `Quitar ${materia.name}`}
         disabled={enviando}
         onClick={onQuitar}
-        className="flex shrink-0 items-center gap-1 rounded-full p-2 text-sm text-ink hover:bg-red-50 hover:text-red-700 disabled:opacity-50"
+        className="flex shrink-0 items-center gap-1 rounded-full p-2 text-sm text-ink hover:bg-rojo/10 hover:text-rojo disabled:opacity-50"
       >
-        {seguro && <span className="text-red-700">¿Seguro?</span>}
+        {seguro && <span className="text-rojo">¿Seguro?</span>}
         <Icono className="h-5 w-5">
           <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6" />
         </Icono>
@@ -329,7 +329,7 @@ export function DocenteDetalle({
             role="tab"
             aria-selected={pestana === opcion}
             onClick={() => setPestana(opcion)}
-            className="rounded-xl bg-blue/5 px-1 py-2.5 text-sm font-medium text-ink aria-selected:bg-accent aria-selected:text-white"
+            className="rounded-xl bg-blue/5 px-1 py-2.5 text-sm font-medium text-ink aria-selected:bg-accent aria-selected:text-ink"
           >
             {opcion}
           </button>
@@ -382,7 +382,7 @@ export function DocenteDetalle({
                       type="button"
                       disabled={!elegida || enviando}
                       onClick={() => asignar(elegida, docente.id, onAsignada)}
-                      className={`${BOTON_ACCION} bg-accent`}
+                      className={`${BOTON_ACCION} bg-accent text-ink`}
                     >
                       Asignar
                     </button>
@@ -390,7 +390,7 @@ export function DocenteDetalle({
                 ))}
 
               {error && (
-                <p role="alert" className="text-sm text-red-600">
+                <p role="alert" className="text-sm text-rojo">
                   {error}
                 </p>
               )}

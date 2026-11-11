@@ -119,7 +119,7 @@ function FormularioCurso({
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-rojo">
           {error}
         </p>
       )}
@@ -128,7 +128,7 @@ function FormularioCurso({
         <button
           type="submit"
           disabled={enviando}
-          className="rounded-xl bg-blue px-4 py-2 font-medium text-white disabled:opacity-50"
+          className="rounded-full bg-blue px-5 py-2 font-medium text-white disabled:opacity-50"
         >
           {submitLabel}
         </button>
@@ -333,7 +333,7 @@ export function CursosAdmin({ institutionId }: { institutionId: string }) {
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-rojo">
           {error}
         </p>
       )}

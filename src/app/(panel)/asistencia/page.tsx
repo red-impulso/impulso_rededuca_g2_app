@@ -57,7 +57,7 @@ function Selectores({ institutionId }: { institutionId: string }) {
 
   if (cursos.status === "error") {
     return (
-      <p role="alert" className="text-red-600">
+      <p role="alert" className="text-rojo">
         {cursos.message}
       </p>
     );
@@ -67,13 +67,14 @@ function Selectores({ institutionId }: { institutionId: string }) {
 
   return (
     <>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+      {/* Selector de curso y fecha arriba (prototipo de asistencia) */}
+      <div className="flex flex-col gap-3 rounded-2xl border border-white/80 bg-white/80 p-4 shadow-[0_8px_30px_rgba(20,24,90,0.06)] sm:flex-row">
+        <label className="flex flex-1 flex-col gap-1 text-sm font-medium">
           Curso
           <select
             value={courseId}
             onChange={(e) => setCourseId(e.target.value)}
-            className="rounded border px-3 py-2"
+            className="rounded-xl border border-gray-300 bg-white px-3 py-2 transition focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/25"
           >
             <option value="">Elegí un curso</option>
             {cursos.courses.map((course) => (
@@ -84,14 +85,14 @@ function Selectores({ institutionId }: { institutionId: string }) {
           </select>
         </label>
 
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+        <label className="flex flex-1 flex-col gap-1 text-sm font-medium">
           Fecha
           <input
             type="date"
             value={date}
             max={hoy}
             onChange={(e) => setDate(e.target.value)}
-            className="rounded border px-3 py-2"
+            className="rounded-xl border border-gray-300 bg-white px-3 py-2 transition focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/25"
           />
         </label>
       </div>
@@ -112,13 +113,16 @@ export default function AsistenciaPage() {
   const session = useSession();
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
-      <h1 className="text-2xl font-semibold">Asistencia</h1>
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10 max-md:pb-24">
+      <header className="flex flex-col gap-1">
+        <h1 className="text-2xl font-bold text-ink">Asistencia</h1>
+        <p className="text-sm text-gray-600">Tomá lista por curso y fecha.</p>
+      </header>
 
       {session.status === "loading" && <p>Cargando...</p>}
 
       {session.status === "error" && (
-        <p role="alert" className="text-red-600">
+        <p role="alert" className="text-rojo">
           No se pudieron cargar tus datos. Probá de nuevo en un rato.
         </p>
       )}

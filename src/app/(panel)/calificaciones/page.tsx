@@ -55,7 +55,7 @@ function Selectores({ institutionId }: { institutionId: string }) {
 
   if (opciones.status === "error") {
     return (
-      <p role="alert" className="text-red-600">
+      <p role="alert" className="text-rojo">
         {opciones.message}
       </p>
     );
@@ -71,13 +71,14 @@ function Selectores({ institutionId }: { institutionId: string }) {
 
   return (
     <>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+      {/* Filtros arriba, dentro de una tarjeta (prototipo de calificaciones) */}
+      <div className="flex flex-col gap-3 rounded-2xl border border-white/80 bg-white/80 p-4 shadow-[0_8px_30px_rgba(20,24,90,0.06)] sm:flex-row">
+        <label className="flex flex-1 flex-col gap-1 text-sm font-medium">
           Materia
           <select
             value={subjectId}
             onChange={(e) => setSubjectId(e.target.value)}
-            className="rounded border px-3 py-2"
+            className="rounded-xl border border-gray-300 bg-white px-3 py-2 transition focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/25"
           >
             <option value="">Elegí una materia</option>
             {subjects.map((subject) => (
@@ -88,12 +89,12 @@ function Selectores({ institutionId }: { institutionId: string }) {
           </select>
         </label>
 
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+        <label className="flex flex-1 flex-col gap-1 text-sm font-medium">
           Período
           <select
             value={periodId}
             onChange={(e) => setPeriodElegido(e.target.value)}
-            className="rounded border px-3 py-2"
+            className="rounded-xl border border-gray-300 bg-white px-3 py-2 transition focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/25"
           >
             <option value="">Elegí un período</option>
             {periods.map((period) => (
@@ -121,13 +122,16 @@ export default function CalificacionesPage() {
   const session = useSession();
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
-      <h1 className="text-2xl font-semibold">Calificaciones</h1>
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10 max-md:pb-24">
+      <header className="flex flex-col gap-1">
+        <h1 className="text-2xl font-bold text-ink">Calificaciones</h1>
+        <p className="text-sm text-gray-600">Cargá las notas de tus materias por período.</p>
+      </header>
 
       {session.status === "loading" && <p>Cargando...</p>}
 
       {session.status === "error" && (
-        <p role="alert" className="text-red-600">
+        <p role="alert" className="text-rojo">
           No se pudieron cargar tus datos. Probá de nuevo en un rato.
         </p>
       )}

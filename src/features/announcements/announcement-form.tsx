@@ -94,9 +94,9 @@ export function AnnouncementForm({
       <button
         type="button"
         onClick={abrir}
-        className="self-start rounded bg-accent px-4 py-2 font-medium text-white"
+        className="self-start rounded-full bg-accent px-5 py-2.5 font-semibold text-ink transition hover:brightness-95"
       >
-        Nuevo comunicado
+        + Nuevo comunicado
       </button>
     );
   }
@@ -105,7 +105,7 @@ export function AnnouncementForm({
 
   if (cursos.status === "error") {
     return (
-      <p role="alert" className="text-red-600">
+      <p role="alert" className="text-rojo">
         {cursos.message}
       </p>
     );
@@ -118,13 +118,13 @@ export function AnnouncementForm({
     (alcance === "institution" || courseId !== "");
 
   return (
-    <form onSubmit={publicar} className="flex flex-col gap-3 rounded border bg-white p-4">
-      <label className="flex flex-col gap-1 text-sm">
+    <form onSubmit={publicar} className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-[0_8px_30px_rgba(20,24,90,0.06)]">
+      <label className="flex flex-col gap-1 text-sm font-medium">
         Alcance
         <select
           value={alcance}
           onChange={(e) => setAlcance(e.target.value as Alcance)}
-          className="rounded border px-3 py-2"
+          className="rounded-xl border border-gray-300 bg-white px-3 py-2 transition focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/25"
         >
           {!esDocente && <option value="institution">Toda la institución</option>}
           <option value="course">Un curso</option>
@@ -132,12 +132,12 @@ export function AnnouncementForm({
       </label>
 
       {alcance === "course" && (
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-1 text-sm font-medium">
           Curso
           <select
             value={courseId}
             onChange={(e) => setCourseId(e.target.value)}
-            className="rounded border px-3 py-2"
+            className="rounded-xl border border-gray-300 bg-white px-3 py-2 transition focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/25"
           >
             <option value="">Elegí un curso</option>
             {cursos.courses.map((course) => (
@@ -149,28 +149,28 @@ export function AnnouncementForm({
         </label>
       )}
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="flex flex-col gap-1 text-sm font-medium">
         Título
         <input
           type="text"
           value={titulo}
           onChange={(e) => setTitulo(e.target.value)}
-          className="rounded border px-3 py-2"
+          className="rounded-xl border border-gray-300 bg-white px-3 py-2 transition focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/25"
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="flex flex-col gap-1 text-sm font-medium">
         Texto
         <textarea
           rows={4}
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
-          className="rounded border px-3 py-2"
+          className="rounded-xl border border-gray-300 bg-white px-3 py-2 transition focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/25"
         />
       </label>
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-rojo">
           {error}
         </p>
       )}
@@ -179,11 +179,15 @@ export function AnnouncementForm({
         <button
           type="submit"
           disabled={!puedePublicar}
-          className="rounded bg-accent px-4 py-2 font-medium text-white disabled:opacity-50"
+          className="rounded-full bg-primario px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {publicando ? "Publicando..." : "Publicar"}
         </button>
-        <button type="button" onClick={cerrar} className="rounded border px-4 py-2">
+        <button
+          type="button"
+          onClick={cerrar}
+          className="rounded-full border border-gray-300 px-5 py-2 text-sm font-semibold text-ink transition hover:bg-gray-50"
+        >
           Cancelar
         </button>
       </div>

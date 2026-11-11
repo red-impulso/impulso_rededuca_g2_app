@@ -208,7 +208,7 @@ export function PanelNav({ children }: { children: ReactNode }) {
 
       <div className="flex flex-1">
         <aside
-          className={`relative w-56 shrink-0 overflow-hidden bg-gradient-to-b from-ink to-[#1d4ed8] text-white max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-30 md:block ${
+          className={`relative w-56 shrink-0 overflow-hidden bg-ink text-white max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-30 md:block ${
             menuAbierto ? "block" : "hidden"
           }`}
         >
@@ -219,11 +219,11 @@ export function PanelNav({ children }: { children: ReactNode }) {
                 item={item}
                 actual={item.href === actual}
                 onClick={() => setMenuAbierto(false)}
-                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-white/10 aria-[current=page]:bg-blue"
+                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-white/10 aria-[current=page]:bg-accent aria-[current=page]:font-semibold aria-[current=page]:text-ink"
               />
             ))}
           </nav>
-          <span aria-hidden className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-accent/80" />
+          <span aria-hidden className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-accent/60" />
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">{children}</div>
@@ -238,7 +238,7 @@ export function PanelNav({ children }: { children: ReactNode }) {
             key={item.href}
             item={item}
             actual={item.href === actualAbajo}
-            className="flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-2 text-[11px] aria-[current=page]:bg-accent aria-[current=page]:font-semibold"
+            className="flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-2 text-[11px] aria-[current=page]:bg-accent aria-[current=page]:font-semibold aria-[current=page]:text-ink"
           />
         ))}
       </nav>

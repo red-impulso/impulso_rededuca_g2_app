@@ -13,7 +13,10 @@ export function BotonSalir() {
   }
 
   return (
-    <button onClick={salir} className="rounded border px-4 py-2">
+    <button
+      onClick={salir}
+      className="rounded-full border border-ink/20 px-4 py-2 font-medium text-ink transition hover:bg-ink/5"
+    >
       Salir
     </button>
   );

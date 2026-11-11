@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { ApiError, apiFetch } from "../../lib/api";
+import { Badge } from "../../components/ui/badge";
+import { Toast } from "../../components/ui/alerta";
 
 // Lo que devuelve GET /grades (ver README de la API).
 interface GradeRow {
@@ -79,7 +81,7 @@ export function GradesSheet({
 
   if (carga.status === "error") {
     return (
-      <p role="alert" className="text-red-600">
+      <p role="alert" className="text-rojo">
         {carga.message}
       </p>
     );
@@ -137,63 +139,82 @@ export function GradesSheet({
 
   return (
     <div className="flex flex-col gap-4">
-      <table className="w-full border-collapse text-left">
-        <thead>
-          <tr className="border-b text-sm text-gray-600">
-            <th className="py-2 font-medium">Alumno</th>
-            <th className="w-24 py-2 font-medium">Nota</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => {
-            const invalido = esInvalido(row);
-            return (
-              <tr key={row.student.id} className="border-b">
-                <td className="py-2 pr-2">
-                  {nombreDe(row)}
-                  {seBorro(row) && <p className="text-sm text-red-600">{AVISO_BORRAR}</p>}
-                </td>
-                <td className="py-2">
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    aria-label={`Nota de ${nombreDe(row)}`}
-                    aria-invalid={invalido}
-                    value={textoDe(row)}
-                    onChange={(e) => escribir(row.student.id, e.target.value)}
-                    className={`w-20 rounded border px-2 py-1 text-center ${
-                      invalido ? "border-red-600 bg-red-50 text-red-700" : ""
-                    }`}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      {/* Tabla con encabezado azul y filas alternadas; scroll horizontal
+          en celular (prototipo de calificaciones). */}
+      <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-[0_8px_30px_rgba(20,24,90,0.06)]">
+        <table className="w-full min-w-105 border-collapse text-left text-sm">
+          <thead className="bg-primario text-white">
+            <tr>
+              <th className="px-4 py-3 font-semibold">Nº</th>
+              <th className="px-4 py-3 font-semibold">Alumno</th>
+              <th className="w-28 px-4 py-3 text-center font-semibold">Nota</th>
+              <th className="w-32 px-4 py-3 font-semibold">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, indice) => {
+              const invalido = esInvalido(row);
+              const nota = leerNota(textoDe(row));
+              return (
+                <tr key={row.student.id} className="border-b border-gray-100 last:border-0 odd:bg-surface/60">
+                  <td className="px-4 py-2.5 text-gray-500">{indice + 1}</td>
+                  <td className="px-4 py-2.5">
+                    {nombreDe(row)}
+                    {seBorro(row) && <p className="text-xs text-rojo">{AVISO_BORRAR}</p>}
+                  </td>
+                  <td className="px-4 py-2.5 text-center">
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      aria-label={`Nota de ${nombreDe(row)}`}
+                      aria-invalid={invalido}
+                      value={textoDe(row)}
+                      onChange={(e) => escribir(row.student.id, e.target.value)}
+                      className={`w-20 rounded-lg border border-gray-300 px-2 py-1.5 text-center transition focus:border-primario focus:outline-none focus:ring-2 focus:ring-primario/25 ${
+                        invalido ? "border-rojo bg-rojo/10 text-rojo" : ""
+                      }`}
+                    />
+                  </td>
+                  <td className="px-4 py-2.5">
+                    {/* Texto además del color, como piden los prototipos */}
+                    {nota === null ? (
+                      <span className="text-xs text-gray-400">Sin nota</span>
+                    ) : nota >= 7 ? (
+                      <Badge tono="verde">Aprobada</Badge>
+                    ) : nota >= 4 ? (
+                      <Badge tono="naranja">En riesgo</Badge>
+                    ) : (
+                      <Badge tono="rojo">Desaprobada</Badge>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
-      {hayInvalidos && <p className="text-sm text-red-600">Las notas van de 1 a 10, con hasta 2 decimales.</p>}
+      {hayInvalidos && (
+        <p className="text-sm text-rojo">Las notas van de 1 a 10, con hasta 2 decimales.</p>
+      )}
 
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={guardar}
           disabled={!puedeGuardar}
-          className="rounded bg-accent px-4 py-2 font-medium text-white disabled:opacity-50"
+          className="rounded-full bg-accent px-5 py-2.5 font-medium text-ink transition hover:brightness-95 disabled:opacity-50"
         >
           {guardando ? "Guardando..." : "Guardar"}
         </button>
-        {guardado.status === "saved" && (
-          <p role="status" className="text-green">
-            Guardado
-          </p>
-        )}
         {guardado.status === "error" && (
-          <p role="alert" className="text-red-600">
+          <p role="alert" className="text-sm text-rojo">
             {guardado.message}
           </p>
         )}
       </div>
+
+      {guardado.status === "saved" && <Toast tipo="exito" onCerrar={() => setGuardado({ status: "idle" })}>¡Listo! Las notas se guardaron.</Toast>}
     </div>
   );
 }

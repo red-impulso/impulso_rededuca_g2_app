@@ -12,10 +12,11 @@ import {
   PantallaVacia,
 } from "../../components/ui/pantalla-estado";
 import { ApiError, apiFetch } from "../../lib/api";
-import { Buscador, Insignia, MenuAcciones, Paginacion, POR_PAGINA, TARJETA } from "../institution/admin-ui";
+import { Buscador, CAMPO, Insignia, MenuAcciones, Paginacion, POR_PAGINA, TARJETA } from "../institution/admin-ui";
 import { normalizar } from "../students/students";
 import { UsuarioForm } from "./usuario-form";
 import { COLOR_ROL, ETIQUETA_ROL, type Usuario } from "./users";
+import type { Role } from "../../config/navigation";
 
 type Carga = { status: "loading" } | { status: "error" } | { status: "ready"; usuarios: Usuario[] };
 
@@ -114,6 +115,8 @@ export function UsuariosAdmin({ institutionId, institutionName }: { institutionI
   const [intento, setIntento] = useState(0);
   const [formulario, setFormulario] = useState<Formulario>(null);
   const [busqueda, setBusqueda] = useState("");
+  const [rolFiltro, setRolFiltro] = useState<Role | "todos">("todos");
+  const [estadoFiltro, setEstadoFiltro] = useState<Usuario["status"] | "todos">("todos");
   const [pagina, setPagina] = useState(0);
   const [aviso, setAviso] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -190,7 +193,7 @@ export function UsuariosAdmin({ institutionId, institutionName }: { institutionI
         titulo="Ocurrió un error"
         texto="No pudimos cargar los usuarios. Intentá de nuevo."
         tono="naranja"
-        claseBoton={`${BOTON_ACCION} bg-blue`}
+        claseBoton={`${BOTON_ACCION} bg-blue text-white`}
         onReintentar={() => {
           setCarga({ status: "loading" });
           setIntento((actual) => actual + 1);
@@ -217,14 +220,19 @@ export function UsuariosAdmin({ institutionId, institutionName }: { institutionI
         texto="Agregá el primer usuario para comenzar."
         icono={ICONO_USUARIOS}
       >
-        <BotonAgregar color="bg-accent" onClick={() => setFormulario("nuevo")} />
+        <BotonAgregar color="bg-accent text-ink" onClick={() => setFormulario("nuevo")} />
       </PantallaVacia>
     );
   }
 
   const buscado = normalizar(busqueda.trim());
-  const filtrados = carga.usuarios.filter((usuario) =>
-    normalizar([usuario.fullName, usuario.email, ETIQUETA_ROL[usuario.role]].filter(Boolean).join(" ")).includes(buscado)
+  const filtrados = carga.usuarios.filter(
+    (usuario) =>
+      (rolFiltro === "todos" || usuario.role === rolFiltro) &&
+      (estadoFiltro === "todos" || usuario.status === estadoFiltro) &&
+      normalizar([usuario.fullName, usuario.email, ETIQUETA_ROL[usuario.role]].filter(Boolean).join(" ")).includes(
+        buscado
+      )
   );
   const ultimaPagina = Math.max(0, Math.ceil(filtrados.length / POR_PAGINA) - 1);
   const paginaActual = Math.min(pagina, ultimaPagina);
@@ -234,7 +242,7 @@ export function UsuariosAdmin({ institutionId, institutionName }: { institutionI
     <div className="flex flex-col gap-4">
       {aviso && <Aviso texto={aviso} onCerrar={() => setAviso(null)} />}
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-rojo">
           {error}
         </p>
       )}
@@ -248,7 +256,44 @@ export function UsuariosAdmin({ institutionId, institutionName }: { institutionI
             setPagina(0);
           }}
         />
-        <BotonAgregar color="bg-blue" onClick={() => setFormulario("nuevo")} />
+        <BotonAgregar color="bg-blue text-white" onClick={() => setFormulario("nuevo")} />
+      </div>
+
+      {/* Filtros por rol y estado (Prompt 11 del informe de diseño). */}
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <label className="flex flex-1 items-center gap-2">
+          <span className="shrink-0 text-sm font-medium text-ink">Rol</span>
+          <select
+            value={rolFiltro}
+            onChange={(e) => {
+              setRolFiltro(e.target.value as Role | "todos");
+              setPagina(0);
+            }}
+            className={`${CAMPO} flex-1`}
+          >
+            <option value="todos">Todos</option>
+            {(Object.keys(ETIQUETA_ROL) as Role[]).map((rol) => (
+              <option key={rol} value={rol}>
+                {ETIQUETA_ROL[rol]}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-1 items-center gap-2">
+          <span className="shrink-0 text-sm font-medium text-ink">Estado</span>
+          <select
+            value={estadoFiltro}
+            onChange={(e) => {
+              setEstadoFiltro(e.target.value as Usuario["status"] | "todos");
+              setPagina(0);
+            }}
+            className={`${CAMPO} flex-1`}
+          >
+            <option value="todos">Todos</option>
+            <option value="active">Activos</option>
+            <option value="inactive">Inactivos</option>
+          </select>
+        </label>
       </div>
 
       {filtrados.length === 0 ? (

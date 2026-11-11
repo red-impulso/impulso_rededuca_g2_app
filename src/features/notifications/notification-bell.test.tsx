@@ -33,19 +33,19 @@ describe('NotificationBell', () => {
     expect(mockApi).toHaveBeenCalledWith('/notifications/unread-count', { institutionId: 'esc-1' });
   });
 
-  it('sin avisos muestra 0 en azul, y con avisos el número va en rojo', async () => {
+  it('sin avisos el contador va en gris, y con avisos el número va en morado', async () => {
     mockApi.mockResolvedValue({ count: 0 });
     const { unmount } = render(<NotificationBell institutionId="esc-1" />);
 
     await waitFor(() => expect(mockApi).toHaveBeenCalled());
     const cero = await screen.findByText('0');
-    expect(cero.className).toContain('bg-blue');
+    expect(cero.className).toContain('bg-gray-300');
     unmount();
 
     mockApi.mockResolvedValue({ count: 3 });
     render(<NotificationBell institutionId="esc-1" />);
 
-    expect((await screen.findByText('3')).className).toContain('bg-red');
+    expect((await screen.findByText('3')).className).toContain('bg-secundario');
   });
 
   it('más de 99 muestra 99+', async () => {
