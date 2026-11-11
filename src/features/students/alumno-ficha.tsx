@@ -139,7 +139,7 @@ function DatosPersonales({ alumno }: { alumno: StudentFile }) {
       </Seccion>
 
       {alumno.updatedAt && (
-        <div className="flex items-center gap-3 rounded-xl border border-accent/20 bg-accent/10 px-4 py-2.5 text-naranja-fuerte">
+        <div className="flex items-center gap-3 rounded-xl border border-accent/20 bg-accent/10 px-4 py-2.5 text-blue">
           <Icono className="h-6 w-6 shrink-0">
             <circle cx="12" cy="12" r="9.5" />
             <path d="M12 11v5M12 8v.5" />
@@ -218,7 +218,16 @@ function Familia({ institutionId, alumno }: { institutionId: string; alumno: Stu
   );
 }
 
-export function AlumnoFicha({ institutionId, studentId }: { institutionId: string; studentId: string }) {
+export function AlumnoFicha({
+  institutionId,
+  studentId,
+  esAdmin = false,
+}: {
+  institutionId: string;
+  studentId: string;
+  // Solo el admin puede dar de alta tutores nuevos (POST /users es solo suyo).
+  esAdmin?: boolean;
+}) {
   const [carga, setCarga] = useState<Carga>({ status: "loading" });
   const [intento, setIntento] = useState(0);
   const [pestana, setPestana] = useState<Pestana>("Datos personales");
@@ -369,7 +378,9 @@ export function AlumnoFicha({ institutionId, studentId }: { institutionId: strin
         {pestana === "Datos personales" && <DatosPersonales alumno={alumno} />}
         {pestana === "Académica" && <StudentAttendance institutionId={institutionId} studentId={studentId} />}
         {pestana === "Familia" && <Familia institutionId={institutionId} alumno={alumno} />}
-        {pestana === "Tutores" && <StudentGuardians institutionId={institutionId} studentId={studentId} />}
+        {pestana === "Tutores" && (
+          <StudentGuardians institutionId={institutionId} studentId={studentId} puedeCrear={esAdmin} />
+        )}
         {pestana === "Notas" && <StudentGrades institutionId={institutionId} studentId={studentId} />}
       </div>
     </>

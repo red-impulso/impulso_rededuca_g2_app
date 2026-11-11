@@ -23,7 +23,7 @@ type Guardado =
   | { status: "error"; message: string };
 
 const ERROR_GENERICO = "No se pudo conectar. Probá de nuevo en un rato.";
-const AVISO_BORRAR = "Por ahora no se puede borrar una nota.";
+const AVISO_BORRAR = "Se borrará al guardar.";
 
 function mensajeDe(error: unknown): string {
   return error instanceof ApiError ? error.message : ERROR_GENERICO;
@@ -92,11 +92,11 @@ export function GradesSheet({
   const { rows } = carga;
   const textoDe = (row: GradeRow) => textos[row.student.id] ?? "";
   const estaVacio = (row: GradeRow) => textoDe(row).trim() === "";
-  // La API ignora los casilleros vacíos: una nota guardada no se puede borrar.
+  // Vaciar una nota guardada la borra; la API recibe value: null.
   const seBorro = (row: GradeRow) => estaVacio(row) && row.value !== null;
-  const esInvalido = (row: GradeRow) =>
-    seBorro(row) || (!estaVacio(row) && leerNota(textoDe(row)) === null);
-  const cambio = (row: GradeRow) => !estaVacio(row) && leerNota(textoDe(row)) !== row.value;
+  const esInvalido = (row: GradeRow) => !estaVacio(row) && leerNota(textoDe(row)) === null;
+  const cambio = (row: GradeRow) =>
+    estaVacio(row) ? row.value !== null : leerNota(textoDe(row)) !== row.value;
 
   const hayInvalidos = rows.some(esInvalido);
   const guardando = guardado.status === "saving";
@@ -121,7 +121,7 @@ export function GradesSheet({
           periodId,
           entries: cambios.map((row) => ({
             studentId: row.student.id,
-            value: leerNota(textoDe(row)),
+            value: estaVacio(row) ? null : leerNota(textoDe(row)),
           })),
         }),
       });
@@ -160,7 +160,7 @@ export function GradesSheet({
                   <td className="px-4 py-2.5 text-gray-500">{indice + 1}</td>
                   <td className="px-4 py-2.5">
                     {nombreDe(row)}
-                    {seBorro(row) && <p className="text-xs text-rojo">{AVISO_BORRAR}</p>}
+                    {seBorro(row) && <p className="text-xs text-blue">{AVISO_BORRAR}</p>}
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     <input

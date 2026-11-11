@@ -139,6 +139,68 @@ describe('StudentGuardians', () => {
     expect(screen.queryByRole('combobox', { name: 'Tutor para vincular' })).toBeNull();
   });
 
+  it('sin permiso de admin no ofrece crear tutor nuevo', async () => {
+    await abrir();
+    await agregar();
+
+    expect(screen.queryByRole('tab', { name: 'Crear nuevo' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Crear y vincular' })).toBeNull();
+  });
+
+  it('el admin crea el usuario tutor y lo vincula de una', async () => {
+    mockApi.mockImplementation(async (path, opciones) => {
+      if (path === '/users') return { id: 'g4' } as never;
+      if (opciones?.method === 'POST')
+        return {
+          id: 'g4',
+          fullName: 'Nuevo Tutor',
+          relationship: 'madre',
+          phone: '388 999 0000',
+          email: 'nuevo@demo.rededuca',
+        } as never;
+      if (path === '/students/s1/guardians') return [maria] as never;
+      if (path === '/guardians') return [maria, jose, ana] as never;
+      throw new Error(`ruta inesperada: ${path}`);
+    });
+    render(<StudentGuardians institutionId="esc-1" studentId="s1" puedeCrear />);
+    await screen.findByRole('heading', { name: /^Tutores \(\d+\)$/ });
+    await agregar();
+    await userEvent.click(screen.getByRole('tab', { name: 'Crear nuevo' }));
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Nombre y apellido' }), 'Nuevo Tutor');
+    await userEvent.type(screen.getByRole('textbox', { name: 'Correo electrónico' }), 'nuevo@demo.rededuca');
+    await userEvent.type(screen.getByLabelText('Contraseña temporal'), 'secreto123');
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Parentesco' }), 'madre');
+    await userEvent.type(screen.getByRole('textbox', { name: 'Teléfono' }), '388 999 0000');
+    await userEvent.click(screen.getByRole('button', { name: 'Crear y vincular' }));
+
+    const posts = mockApi.mock.calls.filter(([, opciones]) => opciones?.method === 'POST');
+    expect(posts[0][0]).toBe('/users');
+    expect(JSON.parse(posts[0][1]!.body as string)).toEqual({
+      fullName: 'Nuevo Tutor',
+      email: 'nuevo@demo.rededuca',
+      role: 'guardian',
+      temporaryPassword: 'secreto123',
+    });
+    expect(posts[1][0]).toBe('/students/s1/guardians');
+    expect(JSON.parse(posts[1][1]!.body as string)).toEqual({
+      guardianMembershipId: 'g4',
+      relationship: 'madre',
+      phone: '388 999 0000',
+    });
+    expect(await tarjeta('Nuevo Tutor').findByText('Madre')).toBeTruthy();
+  });
+
+  it('admin sin tutores disponibles va directo al alta', async () => {
+    responder([maria], [maria]);
+    render(<StudentGuardians institutionId="esc-1" studentId="s1" puedeCrear />);
+    await screen.findByRole('heading', { name: /^Tutores \(\d+\)$/ });
+    await agregar();
+
+    expect(screen.getByRole('textbox', { name: 'Nombre y apellido' })).toBeTruthy();
+    expect(screen.queryByRole('combobox', { name: 'Tutor para vincular' })).toBeNull();
+  });
+
   it('si vincular falla muestra el mensaje de la API y no cambia la lista', async () => {
     await abrir();
     await agregar();

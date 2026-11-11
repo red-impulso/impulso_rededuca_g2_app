@@ -10,7 +10,9 @@ function Ficha() {
 
   return (
     <AdminDirectorOnly>
-      {(institutionId) => <AlumnoFicha institutionId={institutionId} studentId={studentId} />}
+      {(institutionId, role) => (
+        <AlumnoFicha institutionId={institutionId} studentId={studentId} esAdmin={role === "admin"} />
+      )}
     </AdminDirectorOnly>
   );
 }

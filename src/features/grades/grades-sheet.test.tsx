@@ -66,15 +66,29 @@ describe('GradesSheet', () => {
     expect(botonGuardar()).toHaveProperty('disabled', true);
   });
 
-  it('borrar una nota guardada avisa que no se puede y deshabilita Guardar', async () => {
+  it('borrar una nota guardada avisa y al guardar manda null', async () => {
     await abrirPlanilla();
     const casillero = screen.getByLabelText('Nota de Ruiz, Beto');
 
     await userEvent.clear(casillero);
 
-    expect(casillero.getAttribute('aria-invalid')).toBe('true');
-    expect(screen.getByText('Por ahora no se puede borrar una nota.')).toBeTruthy();
-    expect(botonGuardar()).toHaveProperty('disabled', true);
+    expect(casillero.getAttribute('aria-invalid')).toBe('false');
+    expect(screen.getByText('Se borrará al guardar.')).toBeTruthy();
+    expect(botonGuardar()).toHaveProperty('disabled', false);
+
+    mockApi.mockResolvedValueOnce({ saved: 1 });
+    await userEvent.click(botonGuardar());
+
+    expect(mockApi).toHaveBeenLastCalledWith('/grades', {
+      method: 'PUT',
+      institutionId: 'esc-1',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subjectId: 'mat-1',
+        periodId: 'per-1',
+        entries: [{ studentId: 'a2', value: null }],
+      }),
+    });
   });
 
   it('guarda solo lo que cambió, con la coma pasada a número, y muestra Guardado', async () => {

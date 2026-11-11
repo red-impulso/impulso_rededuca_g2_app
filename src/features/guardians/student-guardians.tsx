@@ -140,20 +140,38 @@ function EditarTutor({
 
 function AgregarTutor({
   disponibles,
+  puedeCrear,
   enviando,
   onVincular,
+  onCrear,
   onCancelar,
 }: {
   disponibles: Tutor[];
+  // Solo admin: dar de alta un tutor crea un usuario con rol guardian.
+  puedeCrear: boolean;
   enviando: boolean;
   onVincular: (datos: { guardianMembershipId: string; relationship?: string; phone?: string }) => void;
+  onCrear: (datos: {
+    fullName: string;
+    email: string;
+    temporaryPassword: string;
+    relationship?: string;
+    phone?: string;
+  }) => void;
   onCancelar: () => void;
 }) {
+  const [modo, setModo] = useState<"vincular" | "crear">("vincular");
   const [elegido, setElegido] = useState("");
   const [parentesco, setParentesco] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [email, setEmail] = useState("");
+  const [clave, setClave] = useState("");
 
-  if (disponibles.length === 0) {
+  const hayDisponibles = disponibles.length > 0;
+
+  // Si no hay nadie para vincular y no puede crear, solo queda el aviso.
+  if (!hayDisponibles && !puedeCrear) {
     return (
       <div className="flex flex-col items-start gap-2 rounded-xl border border-blue/10 bg-blue/5 p-3 text-sm text-gray-600">
         <p>No hay más tutores para vincular. Para sumar uno nuevo, un administrador lo carga en Usuarios.</p>
@@ -171,32 +189,121 @@ function AgregarTutor({
     });
   }
 
+  function crear(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    onCrear({
+      fullName: nombre.trim(),
+      email: email.trim(),
+      temporaryPassword: clave,
+      ...(parentesco && { relationship: parentesco }),
+      ...(telefono.trim() && { phone: telefono }),
+    });
+  }
+
+  // Sin tutores para vincular, el admin va directo al alta.
+  const modoEfectivo = hayDisponibles ? modo : "crear";
+
   return (
-    <form onSubmit={vincular} className="flex flex-col gap-3 rounded-xl border border-blue/10 bg-blue/5 p-3">
-      <label className="flex flex-col gap-1 text-sm font-medium text-ink">
-        Tutor para vincular
-        <select value={elegido} onChange={(e) => setElegido(e.target.value)} className={CAMPO}>
-          <option value="">Elegí un tutor</option>
-          {disponibles.map((tutor) => (
-            <option key={tutor.id} value={tutor.id}>
-              {tutor.fullName ?? SIN_NOMBRE}
-            </option>
+    <div className="flex flex-col gap-3 rounded-xl border border-blue/10 bg-blue/5 p-3">
+      {puedeCrear && hayDisponibles && (
+        <div role="tablist" aria-label="Forma de agregar" className="flex gap-1.5">
+          {(
+            [
+              ["vincular", "Vincular existente"],
+              ["crear", "Crear nuevo"],
+            ] as const
+          ).map(([valor, etiqueta]) => (
+            <button
+              key={valor}
+              type="button"
+              role="tab"
+              aria-selected={modoEfectivo === valor}
+              onClick={() => setModo(valor)}
+              className="flex-1 rounded-full bg-white px-3 py-1.5 text-sm font-medium text-ink transition aria-selected:bg-blue aria-selected:text-white"
+            >
+              {etiqueta}
+            </button>
           ))}
-        </select>
-      </label>
-      <CamposContacto
-        parentesco={parentesco}
-        telefono={telefono}
-        onParentesco={setParentesco}
-        onTelefono={setTelefono}
-      />
-      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-        <BotonCancelar onClick={onCancelar} />
-        <button type="submit" disabled={!elegido || enviando} className={`${BOTON_ACCION} bg-accent text-ink`}>
-          Vincular
-        </button>
-      </div>
-    </form>
+        </div>
+      )}
+
+      {modoEfectivo === "vincular" ? (
+        <form onSubmit={vincular} className="flex flex-col gap-3">
+          <label className="flex flex-col gap-1 text-sm font-medium text-ink">
+            Tutor para vincular
+            <select value={elegido} onChange={(e) => setElegido(e.target.value)} className={CAMPO}>
+              <option value="">Elegí un tutor</option>
+              {disponibles.map((tutor) => (
+                <option key={tutor.id} value={tutor.id}>
+                  {tutor.fullName ?? SIN_NOMBRE}
+                </option>
+              ))}
+            </select>
+          </label>
+          <CamposContacto
+            parentesco={parentesco}
+            telefono={telefono}
+            onParentesco={setParentesco}
+            onTelefono={setTelefono}
+          />
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <BotonCancelar onClick={onCancelar} />
+            <button type="submit" disabled={!elegido || enviando} className={`${BOTON_ACCION} bg-accent text-ink`}>
+              Vincular
+            </button>
+          </div>
+        </form>
+      ) : (
+        <form onSubmit={crear} className="flex flex-col gap-3">
+          <div className="grid gap-2 sm:grid-cols-2">
+            <label className="flex flex-col gap-1 text-sm font-medium text-ink">
+              Nombre y apellido
+              <input required value={nombre} onChange={(e) => setNombre(e.target.value)} className={CAMPO} />
+            </label>
+            <label className="flex flex-col gap-1 text-sm font-medium text-ink">
+              Correo electrónico
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={CAMPO}
+              />
+            </label>
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="flex flex-col gap-1 text-sm font-medium text-ink">
+              Contraseña temporal
+              <input
+                type="password"
+                required
+                minLength={6}
+                autoComplete="new-password"
+                aria-describedby="ayuda-clave-tutor"
+                value={clave}
+                onChange={(e) => setClave(e.target.value)}
+                className={CAMPO}
+              />
+            </label>
+            <p id="ayuda-clave-tutor" className="text-xs text-gray-600">
+              Al menos 6 caracteres. Si el correo ya tiene cuenta, sigue usando su contraseña.
+            </p>
+          </div>
+          <CamposContacto
+            parentesco={parentesco}
+            telefono={telefono}
+            onParentesco={setParentesco}
+            onTelefono={setTelefono}
+          />
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <BotonCancelar onClick={onCancelar} />
+            <button type="submit" disabled={enviando} className={`${BOTON_ACCION} bg-accent text-ink`}>
+              Crear y vincular
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
   );
 }
 
@@ -266,7 +373,16 @@ function TarjetaTutor({
 
 // Pestaña Tutores de la ficha del alumno: quién está vinculado y cómo cambiarlo.
 // Quien queda vinculado ve las notas y la asistencia del alumno.
-export function StudentGuardians({ institutionId, studentId }: { institutionId: string; studentId: string }) {
+export function StudentGuardians({
+  institutionId,
+  studentId,
+  puedeCrear = false,
+}: {
+  institutionId: string;
+  studentId: string;
+  // POST /users es solo de admin: con él se puede dar de alta un tutor nuevo.
+  puedeCrear?: boolean;
+}) {
   const [carga, setCarga] = useState<Carga>({ status: "loading" });
   const [intento, setIntento] = useState(0);
   const [agregando, setAgregando] = useState(false);
@@ -319,6 +435,42 @@ export function StudentGuardians({ institutionId, studentId }: { institutionId: 
         institutionId,
         headers: JSON_HEADERS,
         body: JSON.stringify(datos),
+      });
+      actualizar((vinculados) => [...vinculados, tutor]);
+      setAgregando(false);
+    });
+  }
+
+  // Alta de un tutor nuevo: primero se crea el usuario con rol guardian
+  // (POST /users devuelve la membresía) y después se vincula al alumno.
+  function crear(datos: {
+    fullName: string;
+    email: string;
+    temporaryPassword: string;
+    relationship?: string;
+    phone?: string;
+  }) {
+    return enviar(async () => {
+      const usuario = await apiFetch<{ id: string }>("/users", {
+        method: "POST",
+        institutionId,
+        headers: JSON_HEADERS,
+        body: JSON.stringify({
+          fullName: datos.fullName,
+          email: datos.email,
+          role: "guardian",
+          temporaryPassword: datos.temporaryPassword,
+        }),
+      });
+      const tutor = await apiFetch<TutorVinculado>(`/students/${studentId}/guardians`, {
+        method: "POST",
+        institutionId,
+        headers: JSON_HEADERS,
+        body: JSON.stringify({
+          guardianMembershipId: usuario.id,
+          ...(datos.relationship && { relationship: datos.relationship }),
+          ...(datos.phone && { phone: datos.phone }),
+        }),
       });
       actualizar((vinculados) => [...vinculados, tutor]);
       setAgregando(false);
@@ -443,8 +595,10 @@ export function StudentGuardians({ institutionId, studentId }: { institutionId: 
       {agregando && listo && (
         <AgregarTutor
           disponibles={disponibles}
+          puedeCrear={puedeCrear}
           enviando={enviando}
           onVincular={vincular}
+          onCrear={crear}
           onCancelar={() => setAgregando(false)}
         />
       )}
