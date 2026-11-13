@@ -151,26 +151,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer: azul marino con texto claro */}
-      <footer className="bg-lnd-primary text-lnd-bg">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-3 px-6 py-8 text-center text-sm">
-          <span className="font-semibold">RedEduca</span>
-          <nav aria-label="Enlaces del pie" className="flex flex-wrap justify-center gap-x-6 gap-y-1">
-            <a href="#por-que" className="hover:underline">
-              ¿Por qué nace?
-            </a>
-            <a href="#postular" className="hover:underline">
-              Postulación piloto
-            </a>
-            <Link href="/ingresar" className="hover:underline">
-              Ingresar
-            </Link>
-          </nav>
-          <p className="text-lnd-bg/70">
-            Creado por alumnos de IES Nº 6 de Perico, Jujuy, Argentina
-          </p>
-        </div>
-      </footer>
     </main>
   );
 }

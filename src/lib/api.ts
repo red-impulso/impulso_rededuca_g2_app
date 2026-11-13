@@ -1,3 +1,4 @@
+import { isAuthApiError } from "@supabase/supabase-js";
 import { crearClienteSupabase } from "./supabase/client";
 
 export class ApiError extends Error {
@@ -34,11 +35,24 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
   }
 
   const { institutionId, headers, ...rest } = options;
-  const { data } = await crearClienteSupabase().auth.getSession();
+  const supabase = crearClienteSupabase();
+
+  // Sesión podrida (refresh token inválido): limpiamos las cookies y pedimos
+  // sin token. La API responde 401 y la app manda a /ingresar.
+  let accessToken: string | undefined;
+  try {
+    const { data } = await supabase.auth.getSession();
+    accessToken = data.session?.access_token;
+  } catch (e) {
+    if (!isAuthApiError(e)) {
+      throw e;
+    }
+    await supabase.auth.signOut({ scope: "local" });
+  }
 
   const finalHeaders = new Headers(headers);
-  if (data.session) {
-    finalHeaders.set("Authorization", `Bearer ${data.session.access_token}`);
+  if (accessToken) {
+    finalHeaders.set("Authorization", `Bearer ${accessToken}`);
   }
   if (institutionId) {
     finalHeaders.set("X-Institution-Id", institutionId);

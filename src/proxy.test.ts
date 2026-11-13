@@ -1,12 +1,13 @@
-import { AuthRetryableFetchError, AuthSessionMissingError } from '@supabase/supabase-js';
+import { AuthApiError, AuthRetryableFetchError, AuthSessionMissingError } from '@supabase/supabase-js';
 import { NextRequest } from 'next/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { proxy } from './proxy';
 
 const getUser = vi.fn();
+const signOut = vi.fn().mockResolvedValue({ error: null });
 
 vi.mock('@supabase/ssr', () => ({
-  createServerClient: () => ({ auth: { getUser } }),
+  createServerClient: () => ({ auth: { getUser, signOut } }),
 }));
 
 vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'http://supabase.test');
@@ -43,6 +44,20 @@ describe('proxy', () => {
     });
 
     expect(destino(await pedir('/calificaciones'))).toBeNull();
+  });
+
+  it('refresh token inválido: limpia la sesión y manda a /ingresar', async () => {
+    getUser.mockRejectedValue(new AuthApiError('Invalid Refresh Token', 400, 'refresh_token_not_found'));
+
+    expect(destino(await pedir('/inicio'))).toBe('http://localhost:3000/ingresar');
+    expect(signOut).toHaveBeenCalledWith({ scope: 'local' });
+  });
+
+  it('refresh token inválido en la portada: deja pasar y limpia', async () => {
+    getUser.mockRejectedValue(new AuthApiError('Invalid Refresh Token', 400, 'refresh_token_not_found'));
+
+    expect(destino(await pedir('/'))).toBeNull();
+    expect(signOut).toHaveBeenCalledWith({ scope: 'local' });
   });
 
   it('si falla la conexión en /ingresar, se queda ahí', async () => {

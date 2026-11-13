@@ -7,7 +7,7 @@ test('sin sesión, /manifest.webmanifest responde con los datos de RedEduca', as
   const manifest = await response.json();
   expect(manifest.name).toBe('RedEduca');
   expect(manifest.display).toBe('standalone');
-  expect(manifest.theme_color).toBe('#14213d');
+  expect(manifest.theme_color).toBe('#14185a');
 
   // Chrome pide íconos de 192 y 512 px para dejar instalar.
   const sizes = manifest.icons.map((icon: { sizes: string }) => icon.sizes);
