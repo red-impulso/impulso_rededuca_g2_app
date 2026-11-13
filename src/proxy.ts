@@ -1,5 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
-import { isAuthRetryableFetchError } from "@supabase/supabase-js";
+import { isAuthApiError, isAuthRetryableFetchError } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
 const RUTA_INGRESAR = "/ingresar";
@@ -31,27 +31,59 @@ export async function proxy(request: NextRequest) {
       },
     });
 
-    const { data, error } = await supabase.auth.getUser();
+    try {
+      const { data, error } = await supabase.auth.getUser();
 
-    // Hay sesión guardada pero no se pudo hablar con Supabase (mala señal, por
-    // ejemplo). No es lo mismo que "sin sesión": no sacamos a nadie de la
-    // página. La API igual revisa el token en cada pedido.
-    if (isAuthRetryableFetchError(error)) {
-      return response;
+      // Hay sesión guardada pero no se pudo hablar con Supabase (mala señal,
+      // por ejemplo). No es lo mismo que "sin sesión": no sacamos a nadie de
+      // la página. La API igual revisa el token en cada pedido.
+      if (isAuthRetryableFetchError(error)) {
+        return response;
+      }
+
+      // Sesión podrida: el refresh token ya no vale (se recreó el proyecto de
+      // Supabase, se borró el usuario, venció). Borramos las cookies viejas
+      // para que deje de tirar error en cada pedido.
+      if (error && isAuthApiError(error)) {
+        await supabase.auth.signOut({ scope: "local" });
+      }
+
+      hayUsuario = data.user !== null;
+    } catch (e) {
+      // Las versiones nuevas del cliente tiran el AuthApiError en vez de
+      // devolverlo: misma limpieza que arriba.
+      if (isAuthRetryableFetchError(e)) {
+        return response;
+      }
+      if (!isAuthApiError(e)) {
+        throw e;
+      }
+      await supabase.auth.signOut({ scope: "local" });
     }
-
-    hayUsuario = data.user !== null;
   }
 
   const enIngresar = request.nextUrl.pathname === RUTA_INGRESAR;
   const esPublica = enIngresar || request.nextUrl.pathname === "/";
 
+  // Si hubo limpieza de cookies, va en la respuesta que salga (incluido el
+  // redirect), así el navegador no vuelve a mandar la cookie podrida.
+  function conCookiesSeteadas(destino: NextResponse) {
+    response.headers
+      .getSetCookie()
+      .forEach((cookie) => destino.headers.append("set-cookie", cookie));
+    return destino;
+  }
+
   if (!hayUsuario && !esPublica) {
-    return NextResponse.redirect(new URL(RUTA_INGRESAR, request.url));
+    return conCookiesSeteadas(
+      NextResponse.redirect(new URL(RUTA_INGRESAR, request.url)),
+    );
   }
 
   if (hayUsuario && enIngresar) {
-    return NextResponse.redirect(new URL("/inicio", request.url));
+    return conCookiesSeteadas(
+      NextResponse.redirect(new URL("/inicio", request.url)),
+    );
   }
 
   return response;
