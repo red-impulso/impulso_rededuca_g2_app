@@ -54,22 +54,55 @@
   --font-sans: var(--font-inter);
 }
 
-/* Logo animado: las órbitas giran sobre el centro del dibujo.
+/* Logo animado: los anillos giran despacio sobre el centro, que pulsa, y el
+   brillo da vueltas alrededor. Los satélites se mueven con
+   requestAnimationFrame desde logo-animado.tsx.
    Sin animación si la persona tiene activado "reducir movimiento". */
-.logo-orbitas {
+.logo-orbitas,
+.logo-centro-pulso,
+.logo-brillo {
   transform-box: view-box;
   transform-origin: 50% 50%;
 }
 
+.logo-orbita,
+.logo-orbita-atras {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.logo-orbita-atras {
+  opacity: 0.35;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .logo-orbitas {
-    animation: logo-girar 14s linear infinite;
+    animation: logo-girar 24s linear infinite;
+  }
+
+  .logo-centro-pulso {
+    animation: logo-pulso 2.8s ease-in-out infinite;
+  }
+
+  .logo-brillo {
+    animation: logo-girar 6s linear infinite;
   }
 }
 
 @keyframes logo-girar {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes logo-pulso {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.14);
   }
 }
 
