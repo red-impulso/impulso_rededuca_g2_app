@@ -30,8 +30,8 @@ test('la página usa los tokens de marca y la letra Inter', async ({ page }) => 
     };
   });
 
-  expect(estilos.ink).toBe('#14213d');
-  expect(estilos.accent).toBe('#f46a3c');
+  expect(estilos.ink).toBe('#14185a');
+  expect(estilos.accent).toBe('#ffbf43');
   expect(estilos.surface).not.toBe('');
   expect(estilos.fuente).toMatch(/Inter/);
 });
