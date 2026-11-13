@@ -11,10 +11,10 @@ export function SiteFooter() {
           aria-label="Enlaces del pie"
           className="flex flex-wrap justify-center gap-x-6 gap-y-1"
         >
-          <Link href="/#por-que" className="hover:underline">
+          <Link href="/#problema" className="hover:underline">
             ¿Por qué nace?
           </Link>
-          <Link href="/#postular" className="hover:underline">
+          <Link href="/#piloto" className="hover:underline">
             Postulación piloto
           </Link>
           <Link href="/ingresar" className="hover:underline">

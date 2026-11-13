@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest';
 import Home from './page';
 
 describe('página raíz', () => {
-  it('muestra la portada con el titular y la invitación a postular', () => {
+  it('muestra la landing con el titular, la invitación al piloto y el acceso a /ingresar', () => {
     const html = renderToStaticMarkup(Home());
-    expect(html).toContain('comunidad más unida');
-    expect(html).toContain('Postular a Piloto');
+    expect(html).toContain('Tecnología que conecta');
+    expect(html).toContain('prueba piloto');
     expect(html).toContain('/ingresar');
   });
 });
