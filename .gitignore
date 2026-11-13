@@ -51,3 +51,6 @@ next-env.d.ts
 
 # Local History de VS Code
 .history/
+
+# artefacto de la extension Code Runner de VS Code
+tempCodeRunnerFile.*
