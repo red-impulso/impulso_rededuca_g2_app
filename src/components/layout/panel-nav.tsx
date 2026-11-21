@@ -11,7 +11,8 @@ import { BotonSalir } from "../auth/boton-salir";
 import { LogoAnimado } from "../brand/logo-animado";
 import { Icono } from "../ui/estado";
 
-const ICONOS: Record<string, ReactNode> = {
+// También los usa Inicio en sus tarjetas de acceso.
+export const ICONOS: Record<string, ReactNode> = {
   "/inicio": <path d="m3 11 9-8 9 8M5 10v10h5v-6h4v6h5V10" />,
   "/comunicados": <path d="M4 10v4h3l9 4V6l-9 4zM8 14.5 9.5 20M19 9.5v5" />,
   "/calificaciones": <path d="M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v14" />,

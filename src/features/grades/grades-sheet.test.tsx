@@ -141,4 +141,68 @@ describe('GradesSheet', () => {
 
     expect(await screen.findByText('Este curso todavía no tiene alumnos.')).toBeTruthy();
   });
+
+  it('muestra el título con la materia y el curso', async () => {
+    mockApi.mockResolvedValueOnce(planilla);
+    render(<GradesSheet institutionId="esc-1" subjectId="mat-1" periodId="per-1" titulo="4°A - Matemática" />);
+
+    expect(await screen.findByRole('heading', { name: '4°A - Matemática' })).toBeTruthy();
+  });
+
+  it('el buscador filtra por nombre y avisa si no hay nadie', async () => {
+    await abrirPlanilla();
+
+    await userEvent.type(screen.getByRole('searchbox', { name: 'Buscar alumno' }), 'rui');
+    expect(screen.queryByLabelText('Nota de Pérez, Ana')).toBeNull();
+    expect(screen.getByLabelText('Nota de Ruiz, Beto')).toBeTruthy();
+
+    await userEvent.type(screen.getByRole('searchbox', { name: 'Buscar alumno' }), 'zzz');
+    expect(screen.getByText('No hay alumnos con ese nombre.')).toBeTruthy();
+  });
+
+  it('una nota escrita y oculta por el buscador igual se guarda', async () => {
+    const casillero = await abrirPlanilla();
+    await userEvent.type(casillero, '9');
+    await userEvent.type(screen.getByRole('searchbox', { name: 'Buscar alumno' }), 'ruiz');
+
+    mockApi.mockResolvedValueOnce(undefined);
+    await userEvent.click(botonGuardar());
+
+    expect(JSON.parse(mockApi.mock.calls[1][1]!.body as string).entries).toEqual([{ studentId: 'a1', value: 9 }]);
+  });
+
+  it('muestra el promedio del curso y se actualiza al escribir', async () => {
+    const casillero = await abrirPlanilla();
+    expect(screen.getByText('Promedio del curso').nextElementSibling?.textContent).toBe('7,5');
+
+    await userEvent.type(casillero, '8,5');
+    expect(screen.getByText('Promedio del curso').nextElementSibling?.textContent).toBe('8');
+  });
+
+  it('sin notas el promedio dice que no hay', async () => {
+    mockApi.mockResolvedValueOnce([planilla[0]]);
+    render(<GradesSheet institutionId="esc-1" subjectId="mat-1" periodId="per-1" />);
+
+    expect((await screen.findByText('Promedio del curso')).nextElementSibling?.textContent).toBe('Sin notas');
+  });
+
+  it('Exportar descarga la planilla en CSV para Excel', async () => {
+    const crear = vi.fn<(blob: Blob) => string>(() => 'blob:planilla');
+    const revocar = vi.fn();
+    Object.assign(URL, { createObjectURL: crear, revokeObjectURL: revocar });
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+
+    mockApi.mockResolvedValueOnce(planilla);
+    render(<GradesSheet institutionId="esc-1" subjectId="mat-1" periodId="per-1" titulo="4°A - Matemática" />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Exportar' }));
+
+    const bytes = new Uint8Array(await crear.mock.calls[0][0].arrayBuffer());
+    // BOM de UTF-8 al principio, para que Excel lea bien las tildes.
+    expect([...bytes.slice(0, 3)]).toEqual([0xef, 0xbb, 0xbf]);
+    expect(new TextDecoder().decode(bytes.slice(3))).toBe('Nº;Alumno;Nota\r\n1;Pérez, Ana;\r\n2;Ruiz, Beto;7,5\r\n');
+    const enlace = click.mock.instances[0] as unknown as HTMLAnchorElement;
+    expect(enlace.download).toBe('calificaciones 4°A - Matemática.csv');
+    expect(revocar).toHaveBeenCalledWith('blob:planilla');
+    click.mockRestore();
+  });
 });
