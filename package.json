@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:all": "concurrently -n api,app -c yellow,cyan \"npm --prefix ../impulso_rededuca_g2_api run start:dev\" \"npm run dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -25,6 +26,7 @@
     "@types/node": "^26.6.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^10.0.7",
     "eslint": "^10.14.0",
     "eslint-config-next": "16.4.5",
     "jsdom": "^31.0.0",

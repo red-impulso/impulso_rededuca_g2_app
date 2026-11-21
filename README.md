@@ -33,6 +33,14 @@ npm run dev
 
 Después abrir http://localhost:3000
 
+El panel necesita la API (NestJS) en `NEXT_PUBLIC_API_URL`. Si el repo
+`impulso_rededuca_g2_api` está clonado al lado de este (misma carpeta padre),
+un solo comando levanta los dos:
+
+```bash
+npm run dev:all   # api (localhost:4000) + app (localhost:3000)
+```
+
 ## Probar
 
 ```bash
