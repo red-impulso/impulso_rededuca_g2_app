@@ -8,9 +8,11 @@ async function AnioActual() {
   return new Date().getFullYear();
 }
 
+// Es una <section> y no un <footer>: el pie del layout ("Creado por alumnos
+// de IES Nº 6...") ya es el contentinfo, y una página tiene uno solo.
 export function LandingFooter() {
   return (
-    <footer className="site-footer">
+    <section aria-label="Contacto de RedEduca" className="site-footer">
       <a className="brand footer-brand" href="#inicio">
         <BrandLogo />
       </a>
@@ -18,6 +20,6 @@ export function LandingFooter() {
       <Link href="/ingresar">Ingresar</Link>
       <a href="mailto:info@rededuca.edu.ar">info@rededuca.edu.ar</a>
       <small>© <AnioActual /> RedEduca</small>
-    </footer>
+    </section>
   );
 }

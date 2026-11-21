@@ -68,6 +68,8 @@ function Selectores({ institutionId }: { institutionId: string }) {
 
   // Si hay un solo período, ya queda elegido.
   const periodId = periodElegido || (periods.length === 1 ? periods[0].id : "");
+  const subject = subjects.find((s) => s.id === subjectId);
+  const titulo = subject ? `${subject.course.year}°${subject.course.division} - ${subject.name}` : undefined;
 
   return (
     <>
@@ -112,6 +114,7 @@ function Selectores({ institutionId }: { institutionId: string }) {
           institutionId={institutionId}
           subjectId={subjectId}
           periodId={periodId}
+          titulo={titulo}
         />
       )}
     </>

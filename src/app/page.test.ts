@@ -26,4 +26,10 @@ describe('página raíz', () => {
     expect(html).toContain('prueba piloto');
     expect(html).toContain('/ingresar');
   });
+
+  it('no suma otro <footer>: el pie del layout es el único contentinfo de la página', async () => {
+    const html = await renderToHtml(Home());
+    expect(html).not.toContain('<footer');
+    expect(html).toContain('aria-label="Contacto de RedEduca"');
+  });
 });
