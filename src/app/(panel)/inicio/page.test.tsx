@@ -7,6 +7,12 @@ import { apiFetch } from '../../../lib/api';
 import InicioPage from './page';
 
 vi.mock('../../../features/session/use-session', () => ({ useSession: vi.fn() }));
+// La tarjeta de alertas tiene sus propios tests (features/alerts).
+vi.mock('../../../features/alerts/alertas-riesgo', () => ({
+  AlertasRiesgo: ({ institutionId }: { institutionId: string }) => (
+    <section aria-label="Alumnos en riesgo">{institutionId}</section>
+  ),
+}));
 vi.mock('../../../lib/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../../lib/api')>()),
   apiFetch: vi.fn(),
@@ -58,6 +64,22 @@ describe('Inicio', () => {
       expect.stringContaining('Asistencia'),
     ]);
     expect(links.map((l) => l.getAttribute('href'))).toEqual(['/comunicados', '/calificaciones', '/asistencia']);
+  });
+
+  it('el docente ve las alertas de alumnos en riesgo de sus cursos', async () => {
+    sesion('teacher');
+    mockApi.mockResolvedValue([]);
+    render(<InicioPage />);
+
+    expect(screen.getByRole('region', { name: 'Alumnos en riesgo' }).textContent).toBe('esc-1');
+  });
+
+  it('el tutor no ve alertas de otros alumnos', async () => {
+    sesion('guardian');
+    mockApi.mockResolvedValue([]);
+    render(<InicioPage />);
+
+    expect(screen.queryByRole('region', { name: 'Alumnos en riesgo' })).toBeNull();
   });
 
   it('el tutor ve sus propias secciones', async () => {

@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, apiFetch } from '../../lib/api';
 import { NotificationsInbox, mostrarCuando } from './notifications-inbox';
 import { CAMBIO_DE_NOTIFICACIONES } from './notifications-events';
+import { SessionContext, type SessionState } from '../session/session-provider';
 
 vi.mock('../../lib/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../lib/api')>()),
@@ -139,6 +140,39 @@ describe('NotificationsInbox', () => {
     await waitFor(() => expect(push).toHaveBeenCalledWith(destino));
     expect(avisoCambio).toHaveBeenCalled();
     window.removeEventListener(CAMBIO_DE_NOTIFICACIONES, avisoCambio);
+  });
+
+  it.each([
+    ['guardian', '/hijos'],
+    ['admin', '/tablero'],
+    ['director', '/tablero'],
+  ])('una alerta de riesgo muestra los motivos y a un %s lo lleva a %s', async (role, destino) => {
+    const alerta = aviso({
+      id: 'r1',
+      type: 'risk',
+      title: 'Alerta: Ana Pérez necesita acompañamiento',
+      body: 'Asistencia 33,3 % · Matemática: promedio 4,5',
+      readAt: '2026-11-06T16:00:00.000Z',
+    });
+    mockApi.mockResolvedValueOnce([alerta]);
+    render(
+      <SessionContext.Provider
+        value={{ status: 'ready', activeMembership: { id: 'm1', institutionId: 'esc-1', institutionName: 'Escuela', role } } as unknown as SessionState}
+      >
+        <NotificationsInbox institutionId="esc-1" />
+      </SessionContext.Provider>
+    );
+
+    expect(await screen.findByText('Asistencia 33,3 % · Matemática: promedio 4,5')).toBeTruthy();
+    await userEvent.click(fila(/Alerta: Ana Pérez/));
+    expect(push).toHaveBeenCalledWith(destino);
+  });
+
+  it('un tipo de aviso desconocido no rompe la bandeja', async () => {
+    await abrir([aviso({ id: 'x1', type: 'otro', title: 'Algo nuevo' })]);
+
+    await userEvent.click(fila(/Algo nuevo/));
+    expect(push).toHaveBeenCalledWith('/inicio');
   });
 
   it('un aviso ya leído lleva a su pantalla sin volver a marcarlo', async () => {

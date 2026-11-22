@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getNavItems, ROLE_LABELS } from "../../../config/navigation";
+import { AlertasRiesgo } from "../../../features/alerts/alertas-riesgo";
 import { useSession } from "../../../features/session/use-session";
 import type { Announcement } from "../../../features/announcements/announcements-list";
 import { ICONOS } from "../../../components/layout/panel-nav";
@@ -159,6 +160,8 @@ export default function InicioPage() {
               ))}
             </nav>
           )}
+
+          {membership?.role === "teacher" && <AlertasRiesgo institutionId={membership.institutionId} />}
 
           {membership && <ComunicadosRecientes institutionId={membership.institutionId} />}
         </>
