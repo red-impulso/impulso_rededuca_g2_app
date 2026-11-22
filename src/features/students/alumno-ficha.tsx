@@ -11,6 +11,7 @@ import {
 } from "../../components/ui/pantalla-estado";
 import { ApiError, apiFetch } from "../../lib/api";
 import { BoletinBoton } from "../boletin/boletin-boton";
+import { CarnetQr } from "../qr/carnet-qr";
 import { StudentAttendance } from "../guardians/student-attendance";
 import { StudentGrades } from "../guardians/student-grades";
 import { StudentGuardians } from "../guardians/student-guardians";
@@ -33,7 +34,7 @@ type Carga =
   | { status: "error"; mensaje?: string }
   | { status: "ready"; alumno: StudentFile; cursos: Course[] };
 
-const PESTANAS = ["Datos personales", "Académica", "Familia", "Tutores", "Notas"] as const;
+const PESTANAS = ["Datos personales", "Académica", "Familia", "Tutores", "Notas", "Carnet"] as const;
 type Pestana = (typeof PESTANAS)[number];
 
 // En el celular el nombre largo no entra.
@@ -381,6 +382,13 @@ export function AlumnoFicha({
         {pestana === "Familia" && <Familia institutionId={institutionId} alumno={alumno} />}
         {pestana === "Tutores" && (
           <StudentGuardians institutionId={institutionId} studentId={studentId} puedeCrear={esAdmin} />
+        )}
+        {pestana === "Carnet" && (
+          <CarnetQr
+            studentId={studentId}
+            nombre={`${alumno.lastName ?? ""}, ${alumno.firstName ?? ""}`}
+            curso={alumno.course ? cursoAlumno(alumno.course) : "—"}
+          />
         )}
         {pestana === "Notas" && (
           <div className="flex flex-col gap-4">

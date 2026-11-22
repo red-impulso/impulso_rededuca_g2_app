@@ -8,3 +8,7 @@ it('la ficha del hijo tiene la pestaña Notas', () => {
 it('la ficha del hijo tiene la pestaña Asistencia', () => {
   expect(STUDENT_TABS).toContainEqual({ label: 'Asistencia', segment: 'asistencia' });
 });
+
+it('la ficha del hijo tiene la pestaña Carnet (QR para la asistencia)', () => {
+  expect(STUDENT_TABS).toContainEqual({ label: 'Carnet', segment: 'carnet' });
+});

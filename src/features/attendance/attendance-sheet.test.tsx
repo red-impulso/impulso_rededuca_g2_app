@@ -12,6 +12,20 @@ vi.mock('../../lib/api', async (importOriginal) => ({
 
 const mockApi = vi.mocked(apiFetch);
 
+// La cámara de verdad no existe en los tests: el escáner falso tiene botones
+// que "leen" un carnet.
+vi.mock('./escaner-qr', () => ({
+  EscanerQr: ({ onCodigo, onCerrar }: { onCodigo: (texto: string) => void; onCerrar: () => void }) => (
+    <div role="dialog" aria-label="Escanear carnets">
+      <button onClick={() => onCodigo('rededuca:alumno:a1')}>leer carnet de Ana</button>
+      <button onClick={() => onCodigo('rededuca:alumno:a2')}>leer carnet de Beto</button>
+      <button onClick={() => onCodigo('rededuca:alumno:zz')}>leer carnet de otro curso</button>
+      <button onClick={() => onCodigo('hola')}>leer otro QR</button>
+      <button onClick={onCerrar}>Listo</button>
+    </div>
+  ),
+}));
+
 const lista = [
   { student: { id: 'a1', firstName: 'Ana', lastName: 'Pérez' }, status: null },
   { student: { id: 'a2', firstName: 'Beto', lastName: 'Ruiz' }, status: 'absent' },
@@ -137,6 +151,58 @@ describe('AttendanceSheet', () => {
 
     expect(await screen.findByText('Este curso todavía no tiene alumnos.')).toBeTruthy();
   });
+  describe('con QR', () => {
+    const leer = (cual: string) => userEvent.click(screen.getByRole('button', { name: cual }));
+
+    it('escanear el carnet marca presente al alumno y lo confirma', async () => {
+      await abrirLista();
+      await userEvent.click(screen.getByRole('button', { name: 'Escanear QR' }));
+
+      await leer('leer carnet de Ana');
+
+      expect(marcado(estado('Pérez, Ana', 'Presente'))).toBe('true');
+      expect(screen.getByRole('status').textContent).toBe('✓ Pérez, Ana: presente');
+    });
+
+    it('a quien estaba ausente también lo pasa a presente', async () => {
+      await abrirLista();
+      await userEvent.click(screen.getByRole('button', { name: 'Escanear QR' }));
+
+      await leer('leer carnet de Beto');
+
+      expect(marcado(estado('Ruiz, Beto', 'Presente'))).toBe('true');
+    });
+
+    it('un carnet de otro curso o un QR cualquiera no marca a nadie y avisa', async () => {
+      await abrirLista();
+      await userEvent.click(screen.getByRole('button', { name: 'Escanear QR' }));
+
+      await leer('leer carnet de otro curso');
+      expect(screen.getByRole('status').textContent).toBe('Ese alumno no es de este curso.');
+
+      await leer('leer otro QR');
+      expect(screen.getByRole('status').textContent).toBe('Ese QR no es un carnet de RedEduca.');
+      expect(marcado(estado('Pérez, Ana', 'Presente'))).toBe('false');
+    });
+
+    it('lo escaneado se guarda con Guardar asistencia', async () => {
+      await abrirLista();
+      await userEvent.click(screen.getByRole('button', { name: 'Escanear QR' }));
+      await leer('leer carnet de Ana');
+      await leer('Listo');
+      expect(screen.queryByRole('dialog')).toBeNull();
+
+      await userEvent.click(estado('Soto, Caro', 'Ausente'));
+      mockApi.mockResolvedValueOnce({ saved: 2 });
+      await userEvent.click(botonGuardar());
+
+      expect(JSON.parse(mockApi.mock.calls[1][1]!.body as string).entries).toEqual([
+        { studentId: 'a1', status: 'present' },
+        { studentId: 'a3', status: 'absent' },
+      ]);
+    });
+  });
+
 });
 
 describe('hoyLocal', () => {
@@ -148,4 +214,5 @@ describe('hoyLocal', () => {
 
     expect(hoyLocal()).toBe('2026-11-06');
   });
+
 });

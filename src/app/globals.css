@@ -120,3 +120,24 @@ body {
   color: var(--color-texto);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }
+
+/* Imprimir carnet: solo sale el carnet, sin el menú ni el resto de la página. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .carnet-imprimible,
+  .carnet-imprimible * {
+    visibility: visible;
+  }
+
+  .carnet-imprimible {
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

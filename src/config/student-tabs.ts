@@ -8,4 +8,6 @@ export interface StudentTab {
 export const STUDENT_TABS: StudentTab[] = [
   { label: 'Notas', segment: 'notas' },
   { label: 'Asistencia', segment: 'asistencia' },
+  // Carnet digital con el QR que el docente escanea para dar el presente.
+  { label: 'Carnet', segment: 'carnet' },
 ];
