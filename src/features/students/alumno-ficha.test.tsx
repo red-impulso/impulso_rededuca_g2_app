@@ -80,6 +80,7 @@ describe('AlumnoFicha', () => {
       'Familia',
       'Tutores',
       'Notas',
+      'Carnet',
     ]);
 
     const datos = within(screen.getByRole('tabpanel'));
@@ -124,6 +125,15 @@ describe('AlumnoFicha', () => {
 
     expect(await screen.findByText('Tutora Demo')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Tutores (1)' })).toBeTruthy();
+  });
+
+  it('la pestaña Carnet muestra el carnet con QR del alumno', async () => {
+    await abrir();
+
+    await pestana('Carnet');
+
+    expect(screen.getByRole('img', { name: /Código QR de asistencia de/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Imprimir carnet' })).toBeTruthy();
   });
 
   it('la pestaña Académica pide la asistencia y Notas las calificaciones', async () => {

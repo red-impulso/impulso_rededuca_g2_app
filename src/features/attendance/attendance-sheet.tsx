@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ApiError, apiFetch } from "../../lib/api";
 import { Toast } from "../../components/ui/alerta";
+import { leerCodigoAlumno } from "../qr/codigo-alumno";
+import { EscanerQr } from "./escaner-qr";
 
 type Status = "present" | "absent" | "late" | "justified";
 
@@ -47,6 +49,29 @@ function nombreDe({ student }: AttendanceRow): string {
   return `${student.lastName ?? ""}, ${student.firstName ?? ""}`;
 }
 
+// Un "bip" corto al leer un carnet (si el navegador deja).
+function pitido() {
+  try {
+    const Contexto =
+      window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!Contexto) return;
+    const audio = new Contexto();
+    const oscilador = audio.createOscillator();
+    const volumen = audio.createGain();
+    oscilador.frequency.value = 880;
+    volumen.gain.value = 0.15;
+    oscilador.connect(volumen).connect(audio.destination);
+    oscilador.start();
+    oscilador.stop(audio.currentTime + 0.12);
+    oscilador.onended = () => void audio.close();
+  } catch {
+    // Sin sonido no pasa nada: el mensaje en pantalla alcanza.
+  }
+}
+
+// La cámara lee el mismo QR muchas veces por segundo: se toma una vez cada 2,5 s.
+const ESPERA_MISMO_QR = 2500;
+
 export function AttendanceSheet({
   institutionId,
   courseId,
@@ -59,6 +84,9 @@ export function AttendanceSheet({
   const [carga, setCarga] = useState<Carga>({ status: "loading" });
   const [marcas, setMarcas] = useState<Record<string, Status>>({});
   const [guardado, setGuardado] = useState<Guardado>({ status: "idle" });
+  const [escaneando, setEscaneando] = useState(false);
+  const [mensajeQr, setMensajeQr] = useState<string | null>(null);
+  const ultimoQr = useRef({ texto: "", ms: 0 });
 
   useEffect(() => {
     let cancelado = false;
@@ -116,6 +144,27 @@ export function AttendanceSheet({
     setGuardado({ status: "idle" });
   }
 
+  function alLeerQr(texto: string) {
+    const ahora = Date.now();
+    if (texto === ultimoQr.current.texto && ahora - ultimoQr.current.ms < ESPERA_MISMO_QR) return;
+    ultimoQr.current = { texto, ms: ahora };
+
+    const studentId = leerCodigoAlumno(texto);
+    if (!studentId) {
+      setMensajeQr("Ese QR no es un carnet de RedEduca.");
+      return;
+    }
+    const fila = rows.find((row) => row.student.id === studentId);
+    if (!fila) {
+      setMensajeQr("Ese alumno no es de este curso.");
+      return;
+    }
+    marcar(studentId, "present");
+    setMensajeQr(`✓ ${nombreDe(fila)}: presente`);
+    pitido();
+    navigator.vibrate?.(80);
+  }
+
   async function guardar() {
     const cambios = rows.filter(cambio);
     setGuardado({ status: "saving" });
@@ -151,13 +200,30 @@ export function AttendanceSheet({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <button
-          type="button"
-          onClick={todosPresentes}
-          className="rounded-full border border-primario px-4 py-2 text-sm font-semibold text-primario transition hover:bg-primario/10"
-        >
-          Todos presentes
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={todosPresentes}
+            className="rounded-full border border-primario px-4 py-2 text-sm font-semibold text-primario transition hover:bg-primario/10"
+          >
+            Todos presentes
+          </button>
+          {/* El alumno muestra el QR de su carnet y queda presente. */}
+          <button
+            type="button"
+            onClick={() => {
+              setMensajeQr(null);
+              ultimoQr.current = { texto: "", ms: 0 };
+              setEscaneando(true);
+            }}
+            className="flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4 fill-none stroke-current" strokeWidth="2">
+              <path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 12h8" />
+            </svg>
+            Escanear QR
+          </button>
+        </div>
 
         {/* Resumen del día con barra de progreso (prototipo de asistencia) */}
         <div className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white/80 px-4 py-2 text-sm shadow-[0_8px_30px_rgba(20,24,90,0.06)]">
@@ -169,6 +235,16 @@ export function AttendanceSheet({
           </span>
         </div>
       </div>
+
+      {mensajeQr && (
+        <p role="status" className="rounded-xl bg-green/15 px-3 py-2 text-sm font-semibold text-ink">
+          {mensajeQr}
+        </p>
+      )}
+
+      {escaneando && (
+        <EscanerQr onCodigo={alLeerQr} onCerrar={() => setEscaneando(false)} mensaje={mensajeQr ?? undefined} />
+      )}
 
       <ul className="flex flex-col divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white px-4 shadow-[0_8px_30px_rgba(20,24,90,0.06)]">
         {rows.map((row) => (
