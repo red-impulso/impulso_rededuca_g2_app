@@ -10,6 +10,7 @@ import {
   PantallaGuardada,
 } from "../../components/ui/pantalla-estado";
 import { ApiError, apiFetch } from "../../lib/api";
+import { BoletinBoton } from "../boletin/boletin-boton";
 import { StudentAttendance } from "../guardians/student-attendance";
 import { StudentGrades } from "../guardians/student-grades";
 import { StudentGuardians } from "../guardians/student-guardians";
@@ -381,7 +382,19 @@ export function AlumnoFicha({
         {pestana === "Tutores" && (
           <StudentGuardians institutionId={institutionId} studentId={studentId} puedeCrear={esAdmin} />
         )}
-        {pestana === "Notas" && <StudentGrades institutionId={institutionId} studentId={studentId} />}
+        {pestana === "Notas" && (
+          <div className="flex flex-col gap-4">
+            <BoletinBoton
+              institutionId={institutionId}
+              studentId={studentId}
+              alumno={{
+                nombre: `${alumno.lastName ?? ""}, ${alumno.firstName ?? ""}`,
+                curso: alumno.course ? cursoAlumno(alumno.course) : "—",
+              }}
+            />
+            <StudentGrades institutionId={institutionId} studentId={studentId} />
+          </div>
+        )}
       </div>
     </>
   );
