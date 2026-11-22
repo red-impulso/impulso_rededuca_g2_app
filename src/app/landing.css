@@ -1009,3 +1009,26 @@
     border-width: 1px;
   }
 }
+
+/* Celus chicos (360-480px): el menú no entra entero en una línea.
+   "Inicio" se esconde (el logo ya lleva al inicio) y, si igual no entra,
+   el menú baja a otra línea en vez de correr la página de costado. */
+@media (max-width: 480px) {
+  .landing-scope .main-navigation {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .landing-scope .main-navigation a {
+    font-size: 14px;
+  }
+
+  .landing-scope .main-navigation .nav-inicio {
+    display: none;
+  }
+
+  .landing-scope .main-navigation .nav-ingresar,
+  .landing-scope .main-navigation .nav-cta {
+    padding-inline: 10px;
+  }
+}
