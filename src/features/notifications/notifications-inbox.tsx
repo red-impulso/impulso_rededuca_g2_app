@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useContext, useEffect, useState, type ReactNode } from "react";
 import { Cargando, Estado, Icono } from "../../components/ui/estado";
 import { ApiError, apiFetch } from "../../lib/api";
+import { SessionContext } from "../session/session-provider";
 import { avisarCambioDeNotificaciones } from "./notifications-events";
 
-type Tipo = "grade" | "attendance" | "announcement";
+type Tipo = "grade" | "attendance" | "announcement" | "risk";
 
 // Lo que devuelve GET /notifications (ver README de la API).
 interface Notification {
@@ -47,6 +48,18 @@ const TIPOS: Record<Tipo, { destino: string; texto: string; color: string; icono
       <>
         <rect x="5" y="4" width="14" height="17" rx="2" />
         <path d="m9 13 2 2 4-4" />
+      </>
+    ),
+  },
+  // Alerta temprana: al tutor lo lleva a sus hijos; a la dirección, al tablero.
+  risk: {
+    destino: "/tablero",
+    texto: "Un alumno necesita acompañamiento.",
+    color: "bg-rojo text-white",
+    icono: (
+      <>
+        <path d="M12 3 22 20H2z" />
+        <path d="M12 10v4M12 17v.5" />
       </>
     ),
   },
@@ -117,8 +130,22 @@ export function mostrarCuando(createdAt: string, ahora = new Date()): string {
   });
 }
 
+// Un tipo que esta versión de la app todavía no conoce se muestra igual.
+const TIPO_DESCONOCIDO = {
+  destino: "/inicio",
+  texto: "Aviso de RedEduca.",
+  color: "bg-blue text-white",
+  icono: <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9M10 20a2.2 2.2 0 0 0 4 0" />,
+};
+
+function tipoDe(notification: Notification) {
+  return TIPOS[notification.type] ?? TIPO_DESCONOCIDO;
+}
+
 export function NotificationsInbox({ institutionId }: { institutionId: string }) {
   const router = useRouter();
+  const session = useContext(SessionContext);
+  const esTutor = session?.status === "ready" && session.activeMembership?.role === "guardian";
   const [carga, setCarga] = useState<Carga>({ status: "loading" });
   const [intento, setIntento] = useState(0);
   const [filtro, setFiltro] = useState(FILTROS[0]);
@@ -238,7 +265,7 @@ export function NotificationsInbox({ institutionId }: { institutionId: string })
         // Si no se pudo marcar, igual lleva a la pantalla: es lo que se pidió.
       }
     }
-    router.push(TIPOS[notification.type].destino);
+    router.push(notification.type === "risk" && esTutor ? "/hijos" : tipoDe(notification).destino);
   }
 
   async function marcarTodas() {
@@ -298,7 +325,7 @@ export function NotificationsInbox({ institutionId }: { institutionId: string })
       ) : (
         <ul className="divide-y divide-gray-100 overflow-hidden rounded-2xl border border-white/80 bg-white/80 shadow-[0_8px_30px_rgba(20,33,61,0.08)] backdrop-blur">
           {visibles.map((notification) => {
-            const tipo = TIPOS[notification.type];
+            const tipo = tipoDe(notification);
             return (
               <li key={notification.id}>
                 <button

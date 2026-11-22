@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertasRiesgo } from "../../../features/alerts/alertas-riesgo";
 import { Dashboard } from "../../../features/dashboard/dashboard";
 import { useSession } from "../../../features/session/use-session";
 
@@ -24,7 +25,10 @@ export default function TableroPage() {
 
       {session.status === "ready" &&
         (membership?.role === "admin" || membership?.role === "director" ? (
-          <Dashboard institutionId={membership.institutionId} />
+          <>
+            <AlertasRiesgo institutionId={membership.institutionId} conEnlace />
+            <Dashboard institutionId={membership.institutionId} />
+          </>
         ) : (
           <p>Esta sección es para la dirección.</p>
         ))}
