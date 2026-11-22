@@ -1032,3 +1032,11 @@
     padding-inline: 10px;
   }
 }
+
+/* Logo del sistema (LogoAnimado con texto): la tarjeta blanca se ajusta a su
+   ancho en vez de al de la imagen vieja. */
+.landing-scope .brand-image,
+.landing-scope .footer-brand .brand-image {
+  width: auto;
+  padding: 4px 14px 4px 4px;
+}
