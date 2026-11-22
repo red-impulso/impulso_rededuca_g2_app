@@ -8,7 +8,9 @@ export function LandingHeader() {
         <BrandLogo priority />
       </a>
       <nav className="main-navigation" aria-label="Navegación principal">
-        <a href="#inicio">Inicio</a>
+        <a className="nav-inicio" href="#inicio">
+          Inicio
+        </a>
         <a href="#problema">El problema</a>
         <a href="#propuesta">Propuesta</a>
         <Link className="nav-ingresar" href="/ingresar">
