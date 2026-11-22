@@ -125,7 +125,8 @@ export default function CalificacionesPage() {
   const session = useSession();
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10 max-md:pb-24">
+    // Ancha: la planilla tiene 5 instancias, promedio y estado (prototipo).
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-10 max-md:pb-24">
       <header className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold text-ink">Calificaciones</h1>
         <p className="text-sm text-gray-600">Cargá las notas de tus materias por período.</p>
