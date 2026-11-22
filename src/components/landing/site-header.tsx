@@ -5,7 +5,7 @@ export function LandingHeader() {
   return (
     <header className="site-header">
       <a className="brand" href="#inicio" aria-label="RedEduca, inicio">
-        <BrandLogo priority />
+        <BrandLogo />
       </a>
       <nav className="main-navigation" aria-label="Navegación principal">
         <a className="nav-inicio" href="#inicio">

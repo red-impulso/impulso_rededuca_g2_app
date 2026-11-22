@@ -1,21 +1,11 @@
-import Image from "next/image";
+import { LogoAnimado } from "../brand/logo-animado";
 
-const logoProps = {
-  src: "/images/logo_landing.webp",
-  width: 609,
-  height: 224,
-  unoptimized: true,
-};
-
-export function BrandLogo({ priority = false }: { priority?: boolean }) {
+// El mismo logo animado del sistema (órbitas que giran), con "RedEduca /
+// Plataforma Integral" al lado, para que la landing y la app se vean iguales.
+export function BrandLogo() {
   return (
-    <span className="brand-image" role="img" aria-label="RedEduca, Plataforma Integral">
-      <span className="logo-stage">
-        <Image className="logo-text" alt="" {...logoProps} priority={priority} aria-hidden="true" />
-        <span className="logo-spin" aria-hidden="true">
-          <Image className="logo-spin-image" alt="" {...logoProps} priority={priority} />
-        </span>
-      </span>
+    <span className="brand-image">
+      <LogoAnimado size={44} conTexto />
     </span>
   );
 }
